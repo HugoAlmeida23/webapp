@@ -1,0 +1,174 @@
+/* Dashboard.css */
+
+/* Container principal */
+.dashboard-container {
+  padding: 30px;
+  background: linear-gradient(135deg, #eef2f3 0%, #8e9eab 100%);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Título */
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+/* Filtro alinhado à esquerda */
+.filters {
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 2200px;
+  text-align: left; /* Alinha o conteúdo do filtro à esquerda */
+}
+
+.anoLabel{
+  margin-left: 20px;
+}
+
+.filters select {
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+  margin-left: 10px;
+}
+
+.filters select:focus {
+  border-color: #064385;
+}
+/* Estatísticas */
+.dashboard-stats {
+  display: flex;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1200px;
+  justify-content: center;
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 320px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e0e0e0;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.stat-card p {
+  margin: 10px 0 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.stat-card::before {
+  content: '\f02b'; /* Ícone FontAwesome - Fatura */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 22px;
+  color: #ccc;
+}
+
+/* Gráfico */
+.recharts-wrapper {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 1000px;
+  height: 400px;
+}
+
+/* Animações e Transições para os gráficos */
+.recharts-cartesian-axis-tick {
+  transition: transform 0.3s ease;
+}
+
+.recharts-cartesian-axis-tick:hover {
+  transform: scale(1.2);
+}
+
+/* Tabela de Faturas */
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.dashboard-table th {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+}
+
+.dashboard-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Botões */
+.button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0056b3;
+  box-shadow: 0 4px 10px rgba(0, 91, 187, 0.5);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .dashboard-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-card {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .recharts-wrapper {
+    height: 300px;
+  }
+}
