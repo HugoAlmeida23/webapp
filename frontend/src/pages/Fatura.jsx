@@ -6,8 +6,10 @@ import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { FaTrashAlt } from "react-icons/fa";
 import Note from "../components/Notes";
+import { MdArrowDropUp, MdArrowDropDown } from "react-icons/md";
 
 function Fatura() {
+  const [scale, setScale] = useState(1.5);
   const [faturas, setFaturas] = useState([]);
   const [filteredFaturas, setFilteredFaturas] = useState([]);
   const [filterField, setFilterField] = useState(""); // Estado para armazenar o campo do filtro (ex. "entidade", "data", etc.)
@@ -23,12 +25,17 @@ function Fatura() {
   const [notes, setNotes] = useState([]);
   const [content, setContent] = useState([]);
   const [faturaId, setFaturaId] = useState(null);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
     fetchFaturas();
     fetchEntidades();
     getNotes();
   }, []);
+
+  const toggleMinimize = () => {
+    setIsMinimized((prevState) => !prevState);
+  };
 
   const getNotes = () => {
     api
@@ -156,6 +163,15 @@ function Fatura() {
   // Função para lidar com a mudança da data de término
   const handleDataTerminoChange = (e) => setdataTermino(e.target.value);
 
+  const handleClear = () => {
+    setEntidade("");
+    setTipo("");
+    setNif("");
+    setdataInicio("");
+    setdataTermino("");
+    setFilteredFaturas(faturas); // Restaura as faturas originais
+  };
+
   const handleSearch = () => {
     let filtered = [...faturas]; // Cria uma cópia das faturas
 
@@ -203,90 +219,104 @@ function Fatura() {
   return (
     <>
       <Header />
-      <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
-        {/* Campo de seleção de entidade */}
-        <div className="field-group">
-          <label>Escolher Entidade:</label>
-          <select
-            name="entidade"
-            value={entidade}
-            onChange={handleEntityChange}
+      <div className={`formSearchContainer ${isMinimized ? "minimized" : ""}`}>
+        {/* Minimize Button */}
+        <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
+          {/* Campo de seleção de entidade */}
+          <div className="field-group">
+            <label>Entidade:</label>
+            <select
+              name="entidade"
+              value={entidade}
+              onChange={handleEntityChange}
+            >
+              <option value="">Selecione uma entidade</option>
+              {uniqueEntidades.map((entidade, index) => (
+                <option key={index} value={entidade}>
+                  {entidade}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Campo de pesquisa por NIF */}
+          <div className="field-group">
+            <label>NIF:</label>
+            <input
+              type="text"
+              name="nif"
+              value={nif}
+              onChange={handleNIFChange}
+              placeholder="Digite o NIF"
+            />
+          </div>
+
+          {/* Campo de pesquisa por Classificação */}
+          <div className="field-group">
+            <label>Classificação:</label>
+            <input
+              type="text"
+              name="nif"
+              value={nif}
+              onChange={handleNIFChange}
+              placeholder="Digite a classificação"
+            />
+          </div>
+
+          {/* Campo de pesquisa por Tipo de Documento */}
+          <div className="field-group">
+            <label>Tipo de Documento:</label>
+            <select name="tipo" value={tipo} onChange={handleTipoChange}>
+              <option value="">Selecione um tipo de documento</option>
+              {uniqueTipo.map((tipo, index) => (
+                <option key={index} value={tipo}>
+                  {tipo}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro por intervalo de datas */}
+          <div className="field-group">
+            <label>Data de Início:</label>
+            <input
+              type="date"
+              name="dataInicio"
+              value={dataInicio}
+              onChange={handleDataInicioChange}
+            />
+          </div>
+
+          <div className="field-group">
+            <label>Data de Término:</label>
+            <input
+              type="date"
+              name="dataTermino"
+              value={dataTermino}
+              onChange={handleDataTerminoChange}
+            />
+          </div>
+
+          {/* Botão de Pesquisa */}
+
+          <button
+            className="searchButtons"
+            type="submit"
+            onClick={handleSearch}
           >
-            <option value="">Selecione uma entidade</option>
-            {uniqueEntidades.map((entidade, index) => (
-              <option key={index} value={entidade}>
-                {entidade}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Campo de pesquisa por NIF */}
-        <div className="field-group">
-          <label>Pesquisar por NIF:</label>
-          <input
-            type="text"
-            name="nif"
-            value={nif}
-            onChange={handleNIFChange}
-            placeholder="Digite o NIF"
-          />
-        </div>
-
-        {/* Campo de pesquisa por Classificação */}
-        <div className="field-group">
-          <label>Pesquisar por Classificação:</label>
-          <input
-            type="text"
-            name="nif"
-            value={nif}
-            onChange={handleNIFChange}
-            placeholder="Digite a classificação"
-          />
-        </div>
-
-        {/* Campo de pesquisa por Tipo de Documento */}
-        <div className="field-group">
-          <label>Pesquisar por Tipo de Documento:</label>
-          <select name="tipo" value={tipo} onChange={handleTipoChange}>
-            <option value="">Selecione um tipo de documento</option>
-            {uniqueTipo.map((tipo, index) => (
-              <option key={index} value={tipo}>
-                {tipo}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Filtro por intervalo de datas */}
-        <div className="field-group">
-          <label>Data de Início:</label>
-          <input
-            type="date"
-            name="dataInicio"
-            value={dataInicio}
-            onChange={handleDataInicioChange}
-          />
-        </div>
-
-        <div className="field-group">
-          <label>Data de Término:</label>
-          <input
-            type="date"
-            name="dataTermino"
-            value={dataTermino}
-            onChange={handleDataTerminoChange}
-          />
-        </div>
-
-        {/* Botão de Pesquisa */}
-        <button type="submit" onClick={handleSearch}>
-          Pesquisar
-        </button>
-      </form>
+            Pesquisar
+          </button>
+          <button className="searchButtons" type="submit" onClick={handleClear}>
+            Limpar Filtros
+          </button>
+        </form>
+      </div>
       <div className="fatura-container">
         <div className="fatura-layout">
           <div className="fatura-sidebar">
+              <h3 className="filtertext" onClick={toggleMinimize}>
+                {isMinimized ? "Mostrar Filtros" : "Esconder Filtros"}
+              </h3>
             <h3>Documentos</h3>
             {loading ? (
               <div className="loading-spinner"></div>
@@ -301,7 +331,7 @@ function Fatura() {
                     <div className="fatura-info">
                       <div className="fatura-header">
                         <h4 className="fatura-numero">
-                          #{fatura.numero_fatura}
+                          {fatura.numero_fatura}
                         </h4>
                         <span className="fatura-data">
                           {formatDate(fatura.data)}
@@ -337,7 +367,14 @@ function Fatura() {
                 <Worker
                   workerUrl={`/node_modules/pdfjs-dist/build/pdf.worker.min.js`}
                 >
-                  <Viewer fileUrl={fileUrl} />
+                  <Viewer
+                    fileUrl={fileUrl}
+                    style={{
+                      width: "100%",
+                      maxHeight: "100%",
+                      overflow: "auto",
+                    }}
+                  />
                 </Worker>
               ) : (
                 <p>Selecione um documento válido.</p>
