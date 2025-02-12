@@ -120,9 +120,9 @@ function InserirFatura() {
                     <div className="thumbnail-footer">
                       <span>Documento {index + 1}</span>
                       <div className="status-indicator">
-                        {fileObj.status === 'uploading' && '⏳'}
-                        {fileObj.status === 'success' && '✅'}
-                        {fileObj.status === 'error' && `❌`}
+                        {fileObj.status === 'uploading' && <i className="fas fa-spinner fa-spin" style={{ color: "blue" }}></i>}
+                        {fileObj.status === 'success' && <i className="fa-regular fa-circle-check" style={{ color: "green" }}></i>}
+                        {fileObj.status === 'error' && <i class="fa-solid fa-triangle-exclamation" style={{ color: "red" }}></i>}
                       </div>
                     </div>
                   </div>

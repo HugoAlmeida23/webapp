@@ -220,9 +220,7 @@ function Fatura() {
     <>
       <Header />
       <div className={`formSearchContainer ${isMinimized ? "minimized" : ""}`}>
-        {/* Minimize Button */}
         <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
-          {/* Campo de seleção de entidade */}
           <div className="field-group">
             <label>Entidade:</label>
             <select
@@ -296,9 +294,7 @@ function Fatura() {
               onChange={handleDataTerminoChange}
             />
           </div>
-
-          {/* Botão de Pesquisa */}
-
+          
           <button
             className="searchButtons"
             type="submit"
@@ -312,11 +308,14 @@ function Fatura() {
         </form>
       </div>
       <div className="fatura-container">
-        <div className="fatura-layout">
+        <div
+          className="fatura-layout"
+          style={{ height: isMinimized ? "100%" : "85%" }}
+        >
           <div className="fatura-sidebar">
-              <h3 className="filtertext" onClick={toggleMinimize}>
-                {isMinimized ? "Mostrar Filtros" : "Esconder Filtros"}
-              </h3>
+            <h3 className="filtertext" onClick={toggleMinimize}>
+              {isMinimized ? "Mostrar Filtros" : "Esconder Filtros"}
+            </h3>
             <h3>Documentos</h3>
             {loading ? (
               <div className="loading-spinner"></div>
@@ -330,16 +329,14 @@ function Fatura() {
                   >
                     <div className="fatura-info">
                       <div className="fatura-header">
-                        <h4 className="fatura-numero">
-                          {fatura.numero_fatura}
-                        </h4>
+                        <h4 className="fatura-numero">{fatura.entidade}</h4>
                         <span className="fatura-data">
                           {formatDate(fatura.data)}
                         </span>
                       </div>
                       <div className="fatura-details">
                         <span className="fatura-entidade">
-                          {fatura.entidade}
+                          {fatura.description}
                         </span>
                         <span className="fatura-valor">
                           €{parseFloat(fatura.total_fatura).toFixed(2)}
@@ -361,7 +358,8 @@ function Fatura() {
             )}
           </div>
 
-          <div className="fatura-pdf-viewer">
+          <div className="fatura-pdf-viewer"
+          style={{height: isMinimized ? "100vh" : "74vh"}}>
             {selectedFatura ? (
               fileUrl && fileUrl.endsWith(".pdf") ? (
                 <Worker
@@ -387,7 +385,7 @@ function Fatura() {
           {/* Detalhes e edição no lado direito */}
           <div className="fatura-details-container">
             {selectedFatura ? (
-              <form className="formDetails">
+              <div>
                 <div className="field-group">
                   <div>
                     <label>NIF</label>
@@ -541,56 +539,13 @@ function Fatura() {
                 </div>
                 <div className="field-group">
                   <div>
-                    <label>Descrição</label>
-                    <input
-                      type="text"
-                      value={selectedFatura.tipo || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          tipo: e.target.value, // Atualiza o campo "description" (Descrição)
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-                  <div>
-                    <label>Tipo</label>
-                    <select
-                      value={selectedFatura.tipo || ""} // Mostra o tipo associado, ou "" caso não exista
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura,
-                          tipo: e.target.value, // Atualiza o tipo selecionado
-                        })
-                      }
-                    >
-                      {/* As opções disponíveis */}
-                      <option value="Fatura">Fatura</option>
-                      <option value="Fatura Simplificada">
-                        Fatura Simplificada
-                      </option>
-                      <option value="Comprovante de Venda">
-                        Comprovante de Venda
-                      </option>
-                      <option value="Nota de Débito">Nota de Débito</option>
-                      <option value="Nota de Crédito">Nota de Crédito</option>
-                      <option value="Fatura Proforma">Fatura Proforma</option>
-                      <option value="Recibo">Recibo</option>
-                      <option value="Nota Fiscal Eletrônica">
-                        Nota Fiscal Eletrônica
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div className="field-group">
-                  <div>
                     <label>Classificação</label>
                     <select
-                      value={selectedFatura.description || ""}
+                      value={selectedFatura.classificacao || ""}
                       onChange={(e) =>
                         setSelectedFatura({
                           ...selectedFatura,
-                          description: e.target.value,
+                          classificacao: e.target.value,
                         })
                       }
                     >
@@ -644,7 +599,102 @@ function Fatura() {
                       <option value="75.3 - Água e Esgoto">
                         75.3 - Água e Esgoto
                       </option>
+                      <option value="76 - Fornecimentos e Serviços Externos">
+                        76 - Fornecimentos e Serviços Externos
+                      </option>
+                      <option value="76.1 - Trabalhos Especializados">
+                        76.1 - Trabalhos Especializados
+                      </option>
+                      <option value="76.2 - Honorários">
+                        76.2 - Honorários
+                      </option>
+                      <option value="76.3 - Comissões">76.3 - Comissões</option>
+                      <option value="76.4 - Rendas e Aluguéis">
+                        76.4 - Rendas e Aluguéis
+                      </option>
+                      <option value="76.5 - Comunicação">
+                        76.5 - Comunicação
+                      </option>
+                      <option value="76.6 - Seguros">76.6 - Seguros</option>
+                      <option value="76.7 - Royalties">76.7 - Royalties</option>
+                      <option value="77 - Impostos e IVA">
+                        77 - Impostos e IVA
+                      </option>
+                      <option value="77.1 - IVA Suportado">
+                        77.1 - IVA Suportado
+                      </option>
+                      <option value="77.2 - IVA Dedutível">
+                        77.2 - IVA Dedutível
+                      </option>
+                      <option value="77.3 - IVA Liquidado">
+                        77.3 - IVA Liquidado
+                      </option>
+                      <option value="78 - Gastos com o Pessoal">
+                        78 - Gastos com o Pessoal
+                      </option>
+                      <option value="78.1 - Remunerações">
+                        78.1 - Remunerações
+                      </option>
+                      <option value="78.2 - Benefícios Pós-Emprego">
+                        78.2 - Benefícios Pós-Emprego
+                      </option>
+                      <option value="78.3 - Indemnizações">
+                        78.3 - Indemnizações
+                      </option>
+                      <option value="79 - Juros e Encargos Financeiros">
+                        79 - Juros e Encargos Financeiros
+                      </option>
+                      <option value="79.1 - Juros Suportados">
+                        79.1 - Juros Suportados
+                      </option>
+                      <option value="79.2 - Diferenças de Câmbio">
+                        79.2 - Diferenças de Câmbio
+                      </option>
                     </select>
+                  </div>
+
+                  <div>
+                    <label>Tipo</label>
+                    <select
+                      value={selectedFatura.tipo || ""} // Mostra o tipo associado, ou "" caso não exista
+                      onChange={(e) =>
+                        setSelectedFatura({
+                          ...selectedFatura,
+                          tipo: e.target.value, // Atualiza o tipo selecionado
+                        })
+                      }
+                    >
+                      {/* As opções disponíveis */}
+                      <option value="Fatura">Fatura</option>
+                      <option value="Fatura Simplificada">
+                        Fatura Simplificada
+                      </option>
+                      <option value="Comprovante de Venda">
+                        Comprovante de Venda
+                      </option>
+                      <option value="Nota de Débito">Nota de Débito</option>
+                      <option value="Nota de Crédito">Nota de Crédito</option>
+                      <option value="Fatura Proforma">Fatura Proforma</option>
+                      <option value="Recibo">Recibo</option>
+                      <option value="Nota Fiscal Eletrônica">
+                        Nota Fiscal Eletrônica
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div className="field-group">
+                  <div>
+                    <label>Descrição</label>
+                    <input
+                      type="text"
+                      value={selectedFatura.description || ""} // Exibe o valor atual ou vazio
+                      onChange={(e) =>
+                        setSelectedFatura({
+                          ...selectedFatura, // Mantém os outros campos
+                          tipo: e.target.value, // Atualiza o campo "description" (Descrição)
+                        })
+                      } // Atualiza o estado ao digitar
+                    />
                   </div>
                 </div>
                 <div className="notes-container">
@@ -659,7 +709,7 @@ function Fatura() {
                 <button type="submit" className="btn">
                   Guardar Alterações
                 </button>
-              </form>
+              </div>
             ) : (
               <p>Selecione uma fatura para editar os detalhes.</p>
             )}

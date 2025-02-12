@@ -136,7 +136,7 @@ class FaturaListCreate(generics.ListCreateAPIView):
                 # Cria a fatura com os dados extraídos
                 serializer.save(
                     user=self.request.user,
-                    description=formatted_data.get('NumeroFatura', 'Descrição não encontrada'),
+                    description=formatted_data.get('Descricao', 'Descrição não encontrada'),
                     nif=formatted_data.get('NIF', 'NIF não encontrado'),
                     entidade=formatted_data.get('Entidade', 'Desconhecido'),
                     pais=formatted_data.get('Pais', 'Pais não encontrado'),
