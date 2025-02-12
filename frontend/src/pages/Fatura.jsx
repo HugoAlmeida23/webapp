@@ -6,9 +6,11 @@ import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { FaTrashAlt } from "react-icons/fa";
 import Note from "../components/Notes";
-import { MdArrowDropUp, MdArrowDropDown } from "react-icons/md";
+import NotePopup from "../components/NotePopup";
 
 function Fatura() {
+  const [notes, setNotes] = useState([]);
+  const [isPopupOpen, setPopupOpen] = useState(false);
   const [scale, setScale] = useState(1.5);
   const [faturas, setFaturas] = useState([]);
   const [filteredFaturas, setFilteredFaturas] = useState([]);
@@ -22,7 +24,6 @@ function Fatura() {
   const [selectedFatura, setSelectedFatura] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
   const [entidadesDisponiveis, setEntidadesDisponiveis] = useState([]);
-  const [notes, setNotes] = useState([]);
   const [content, setContent] = useState([]);
   const [faturaId, setFaturaId] = useState(null);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -31,6 +32,8 @@ function Fatura() {
     fetchFaturas();
     fetchEntidades();
     getNotes();
+    console.log("Viewport Width:", window.innerWidth);
+    console.log("Viewport Height:", window.innerHeight);
   }, []);
 
   const toggleMinimize = () => {
@@ -59,13 +62,11 @@ function Fatura() {
       .catch((error) => alert(error));
   };
 
-  const createNote = (e) => {
-    e.preventDefault();
+  const createNote = ({ title, content }) => {
     api
-      .post("/api/notes/", { content, title })
+      .post("/api/notes/", { title, content })
       .then((res) => {
         if (res.status === 201) alert("Note created!");
-        else alert("Failed to make note.");
         getNotes();
       })
       .catch((err) => alert(err));
@@ -219,6 +220,29 @@ function Fatura() {
   return (
     <>
       <Header />
+      <button
+        onClick={toggleMinimize}
+        style={{
+          background: "none",
+          border: "none",
+          padding: "0",
+          cursor: "pointer",
+        }}
+      >
+        <i
+  className={`fa-solid ${isMinimized ? "fa-circle-chevron-down" : "fa-circle-chevron-up"}`}
+  style={{
+    marginBottom: "10px",
+    marginTop: "-10px",
+    marginLeft: "10px",
+    color: "#0000FF",
+    fontSize: "25px",
+    display: "inline-block",
+    textAlign: "center",
+  }}
+></i>
+
+      </button>
       <div className={`formSearchContainer ${isMinimized ? "minimized" : ""}`}>
         <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
           <div className="field-group">
@@ -294,7 +318,7 @@ function Fatura() {
               onChange={handleDataTerminoChange}
             />
           </div>
-          
+
           <button
             className="searchButtons"
             type="submit"
@@ -313,9 +337,6 @@ function Fatura() {
           style={{ height: isMinimized ? "100%" : "85%" }}
         >
           <div className="fatura-sidebar">
-            <h3 className="filtertext" onClick={toggleMinimize}>
-              {isMinimized ? "Mostrar Filtros" : "Esconder Filtros"}
-            </h3>
             <h3>Documentos</h3>
             {loading ? (
               <div className="loading-spinner"></div>
@@ -358,8 +379,10 @@ function Fatura() {
             )}
           </div>
 
-          <div className="fatura-pdf-viewer"
-          style={{height: isMinimized ? "100vh" : "74vh"}}>
+          <div
+            className="fatura-pdf-viewer"
+            style={{ height: isMinimized ? "100vh" : "74vh" }}
+          >
             {selectedFatura ? (
               fileUrl && fileUrl.endsWith(".pdf") ? (
                 <Worker
@@ -700,12 +723,23 @@ function Fatura() {
                 <div className="notes-container">
                   <h2 className="notas-title">Notas</h2>
                   {notes
-                    .filter((note) => note.fatura_id === faturaId)
+                    .filter((note) => {
+                      return note.fatura_id === selectedFatura.id; // Filter based on matching ids
+                    })
                     .map((note) => (
-                      <Note note={note} onDelete={deleteNote} key={note.id} />
+                      <Note key={note.id} note={note} onDelete={deleteNote} />
                     ))}
-                  <button className="btn">Adicionar Nota</button>
+                  <button className="btn" onClick={() => setPopupOpen(true)}>
+                    Adicionar Nota
+                  </button>
                 </div>
+
+                {/* Popup */}
+                <NotePopup
+                  isOpen={isPopupOpen}
+                  closePopup={() => setPopupOpen(false)}
+                  createNote={createNote}
+                />
                 <button type="submit" className="btn">
                   Guardar Alterações
                 </button>

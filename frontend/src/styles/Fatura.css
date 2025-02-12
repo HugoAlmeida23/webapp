@@ -1,3 +1,24 @@
+
+@media (max-width: 1320px) {
+  .formSearchContainer .formSearch {
+    max-width: 90%; /* More specific selector */
+    display: flex;
+    gap: 10px; /* Smaller gap for smaller screens */
+  }
+
+  .formSearch button {
+    margin-top: 80px !important; /* Garante que o botão tenha a margem superior desejada */
+    padding: 12px !important;
+    font-size: 12px !important;
+    width: 48% !important; /* Adjust width to fit 2 buttons with space */
+    margin-left: 0 !important; /* No need for negative margin */
+    margin-right: 0 !important; /* Remove any right margin */
+    text-align: center; /* Garante que o texto fique centralizado */
+    transition: background-color 0.3s ease;
+  }
+}
+
+
 .formSearchContainer {
   max-height: 500px; /* Ajuste conforme necessário */
   overflow: hidden;
@@ -10,7 +31,6 @@
   opacity: 0;
   margin-bottom: 0;
 }
-
 
 /* FORM SEARCH (mantido igual) */
 .formSearch {
@@ -281,13 +301,13 @@ h3 {
 
 /* Ajusta o container interno do PDF */
 .react-pdf__Page {
-  max-width: 100% !important;
+  max-width: 100% ;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
 .react-pdf__Page canvas {
-  max-width: 100% !important;
-  height: auto !important;
+  max-width: 100% ;
+  height: auto ;
 }
 
 /* DETALHES DA FATURA */
@@ -340,18 +360,6 @@ h3 {
   margin-bottom: 1rem;
 }
 
-
-/* RESPONSIVIDADE */
-@media (max-width: 1200px) {
-  .fatura-pdf-viewer {
-    width: 40%;
-  }
-  
-  .fatura-details-container {
-    width: 35%;
-  }
-}
-
 /* LOADING SPINNER */
 .loading-spinner {
   border: 4px solid #f3f3f3;
@@ -392,3 +400,5 @@ h3 {
 .btn:active {
   transform: scale(0.98);
 }
+
+
