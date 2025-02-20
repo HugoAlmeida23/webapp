@@ -16,6 +16,17 @@
     transition: background-color 0.3s ease;
   }
 }
+.header {
+  z-index: 1000;
+  position: fixed;
+}
+
+.main-content {
+  margin-left: -7%; /* Largura da sidebar */
+  width: 95%; /* Restante da tela */
+  height: 100vh;
+  overflow-y: auto;
+}
 
 html, body {
   height: 100vh;
@@ -32,16 +43,18 @@ html, body {
 
 
 .formSearchContainer {
-  max-height: 500px; /* Ajuste conforme necessário */
-  overflow: hidden;
+  max-height: 500px;
+  overflow: visible; /* Change from hidden to visible */
   opacity: 1;
   transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, margin-bottom 0.5s ease-in-out;
+  
 }
 
 .formSearchContainer.minimized {
   max-height: 0;
   opacity: 0;
   margin-bottom: 0;
+  overflow: hidden; /* Keep hidden when minimized */
 }
 
 /* FORM SEARCH (mantido igual) */
@@ -62,6 +75,7 @@ html, body {
 .formSearch .field-group {
   flex: 1;
   min-width: 150px;
+  position: static; /* Prevent accidental stacking contexts */
 }
 
 .formSearch label {
@@ -115,6 +129,7 @@ html, body {
   flex-direction: column;
   height: calc(100vh - 120px);
   font-family: 'Segoe UI', system-ui, sans-serif;
+  z-index: 0; /* Reset stacking context */
 }
 
 /* LAYOUT GERAL */
@@ -130,10 +145,14 @@ html, body {
 .fatura-sidebar {
   width: 25%;
   min-width: 280px;
+  margin-left: 65px;
   padding: 1rem;
   background: #ffffff;
   border-right: 1px solid #ecedee;
   overflow-y: auto;
+  position: relative;
+  z-index: auto; /* Remove z-index declaration */
+  transform: none; /* Remove any transform if present */
 }
 
 .fatura-sidebar h3 {
@@ -233,16 +252,16 @@ html, body {
 
 /* VISUALIZADOR PDF */
 .fatura-pdf-viewer {
-  width: 80vh;
-  height: 74vh; /* Full screen height */
+  width: 100vh; /* Use percentage for responsiveness */
+  height: 100%; /* Inherit height from parent */
   display: flex;
   justify-content: center;
   align-items: center;
-  background: transparent; /* Ensure no background */
-  box-shadow: none; /* Remove shadow */
-  border-radius: 0; /* Remove rounded corners */
-  overflow: hidden; /* Prevent scrollbars */
-  transition: height 0.3s ease-in-out; /* Suaviza a transição */
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
 }
 
 /* Style for the minimize button */
@@ -306,6 +325,7 @@ h3 {
 .formSearch {
   padding: 20px;
   transition: opacity 0.3s ease;
+  overflow: visible !important;
 }
 
 .formSearch.minimized {
@@ -325,7 +345,7 @@ h3 {
 
 /* DETALHES DA FATURA */
 .fatura-details-container {
-  width: 40%;
+  width: 25%;
   background: #fff;
   border-radius: 8px;
   padding: 1rem;
@@ -462,6 +482,40 @@ h3 {
 
 .btn:active {
   transform: scale(0.98);
+}
+
+.autocomplete-wrapper {
+  position: relative;
+  width: 100%;
+  z-index: 1; /* Add this */
+  isolation: isolate; /* Creates new stacking context */
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  z-index: 1000; /* Increase this */
+  max-height: 100px;
+  overflow-y: auto;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #000000;
+  margin-top: -18px;
+}
+
+.dropdown-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-option:hover {
+  background-color: #f5f5f5;
 }
 
 
