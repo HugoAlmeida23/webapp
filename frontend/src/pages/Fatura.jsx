@@ -230,18 +230,19 @@ function Fatura() {
         }}
       >
         <i
-  className={`fa-solid ${isMinimized ? "fa-circle-chevron-down" : "fa-circle-chevron-up"}`}
-  style={{
-    marginBottom: "10px",
-    marginTop: "-10px",
-    marginLeft: "10px",
-    color: "#0000FF",
-    fontSize: "25px",
-    display: "inline-block",
-    textAlign: "center",
-  }}
-></i>
-
+          className={`fa-solid ${
+            isMinimized ? "fa-circle-chevron-down" : "fa-circle-chevron-up"
+          }`}
+          style={{
+            marginBottom: "10px",
+            marginTop: "-10px",
+            marginLeft: "10px",
+            color: "#0000FF",
+            fontSize: "25px",
+            display: "inline-block",
+            textAlign: "center",
+          }}
+        ></i>
       </button>
       <div className={`formSearchContainer ${isMinimized ? "minimized" : ""}`}>
         <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
@@ -720,8 +721,8 @@ function Fatura() {
                     />
                   </div>
                 </div>
+                <h2 className="notas-title">Notas</h2>
                 <div className="notes-container">
-                  <h2 className="notas-title">Notas</h2>
                   {notes
                     .filter((note) => {
                       return note.fatura_id === selectedFatura.id; // Filter based on matching ids
@@ -729,20 +730,21 @@ function Fatura() {
                     .map((note) => (
                       <Note key={note.id} note={note} onDelete={deleteNote} />
                     ))}
-                  <button className="btn" onClick={() => setPopupOpen(true)}>
-                    Adicionar Nota
-                  </button>
                 </div>
-
                 {/* Popup */}
                 <NotePopup
                   isOpen={isPopupOpen}
                   closePopup={() => setPopupOpen(false)}
                   createNote={createNote}
                 />
-                <button type="submit" className="btn">
-                  Guardar Alterações
-                </button>
+                <div className="buttoncontainer">
+                  <button className="button-33" onClick={() => setPopupOpen(true)}>
+                    Adicionar Nota
+                  </button>
+                  <button type="submit" className="button-33">
+                    Guardar Alterações
+                  </button>
+                </div>
               </div>
             ) : (
               <p>Selecione uma fatura para editar os detalhes.</p>

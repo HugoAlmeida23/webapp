@@ -1,8 +1,10 @@
 /* Container de cada Nota */
 .note-container {
   background-color: #f9f9f9; /* Fundo claro */
-  padding: 20px; /* Espaçamento interno maior */
-  margin: 20px 0; /* Espaçamento entre notas */
+  padding: 10px; /* Espaçamento interno maior */
+  margin: 10px 0; /* Espaçamento entre notas */
+  max-width: 300px;
+  max-height: 300px;
   border: 1px solid #e0e0e0; /* Bordas suaves */
   border-radius: 12px; /* Bordas arredondadas */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra sutil */
@@ -12,7 +14,7 @@
 
 /* Título da Nota */
 .note-title {
-  font-size: 1rem; /* Maior destaque para o título */
+  font-size: 0.8rem; /* Maior destaque para o título */
   font-weight: bold; /* Negrito */
   color: #2a2a2a; /* Texto escuro para contraste */
   margin-bottom: 10px; /* Espaço entre título e conteúdo */
@@ -24,7 +26,7 @@
 /* Corpo do Conteúdo */
 .note-content {
   color: #4a4a4a; /* Cinza escuro para texto */
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   line-height: 1.6; /* Espaçamento entre linhas */
   margin: 15px 0; /* Espaçamento entre conteúdo e data */
   text-align: justify; /* Texto justificado para melhor leitura */
@@ -32,10 +34,9 @@
 
 /* Data da Nota */
 .note-date {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: #636262; /* Cinza claro */
   text-align: right; /* Alinhado à direita */
-  font-style: italic; /* Itálico para diferenciar */
   position: absolute; /* Posicionamento absoluto */
   top: 10px; /* Distância do topo */
   right: 20px; /* Distância da borda direita */

@@ -1,4 +1,3 @@
-
 @media (max-width: 1320px) {
   .formSearchContainer .formSearch {
     max-width: 90%; /* More specific selector */
@@ -16,6 +15,19 @@
     text-align: center; /* Garante que o texto fique centralizado */
     transition: background-color 0.3s ease;
   }
+}
+
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevents scrolling */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 
@@ -98,6 +110,7 @@
 
 /* CONTAINER PRINCIPAL */
 .fatura-container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   height: calc(100vh - 120px);
@@ -349,16 +362,66 @@ h3 {
 
 /* NOTAS */
 .notes-container {
-  margin-top: 1.5rem;
+  display: grid; /* Necessário para ativar o Grid */
+  margin-top: 20px;
   padding-top: 1rem;
   border-top: 1px solid #eee;
+  grid-template-columns: repeat(3, 1fr); /* Sempre 3 colunas por linha */
+  gap: 16px; /* Espaço entre as notas */
 }
+
+.buttoncontainer {
+  display: flex;  /* Enables flexbox layout */
+  gap: 10px;      /* Adds space between buttons */
+  margin-right: 10px; 
+  margin-top: 10px;
+}
+
+.button-33 {
+  background-color: #0000FF; /* Pure blue */
+  border-radius: 100px;
+  box-shadow: rgba(0, 0, 255, 0.2) 0 -25px 18px -14px inset,
+              rgba(0, 0, 255, 0.15) 0 1px 2px,
+              rgba(0, 0, 255, 0.15) 0 2px 4px,
+              rgba(0, 0, 255, 0.15) 0 4px 8px,
+              rgba(0, 0, 255, 0.15) 0 8px 16px,
+              rgba(0, 0, 255, 0.15) 0 16px 32px;
+  color: #ffffff; /* White text */
+  cursor: pointer;
+  display: inline-block;
+  font-family: CerebriSans-Regular, -apple-system, system-ui, Roboto, sans-serif;
+  padding: 7px 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 250ms;
+  border: 0;
+  font-size: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-33:hover {
+  box-shadow: rgba(0, 0, 200, 0.35) 0 -25px 18px -14px inset,
+              rgba(0, 0, 200, 0.25) 0 1px 2px,
+              rgba(0, 0, 200, 0.25) 0 2px 4px,
+              rgba(0, 0, 200, 0.25) 0 4px 8px,
+              rgba(0, 0, 200, 0.25) 0 8px 16px,
+              rgba(0, 0, 200, 0.25) 0 16px 32px;
+  transform: scale(1.05) rotate(-1deg);
+  background-color: #0000CC; /* Darker blue on hover */
+}
+
+
+
+
 
 .notas-title {
   font-size: 1.1rem;
   color: #2c3e50;
   margin-bottom: 1rem;
 }
+
 
 /* LOADING SPINNER */
 .loading-spinner {
