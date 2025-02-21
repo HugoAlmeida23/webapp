@@ -1,10 +1,14 @@
 /* Global Styles */
+main {
+  background-color: #ffffff; /* Light background for readability */
+}
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
-  background-color: #f4f4f9; /* Light background for readability */
+  background-color: #ffffff; /* Light background for readability */
 }
 
 /* Form Styles */
@@ -19,8 +23,28 @@ form {
 }
 
 form:hover {
+  background-color: #ffffff; /* Light background for readability */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Slightly deeper shadow on hover */
 }
+
+
+.dashboard-stats .stat-card {
+  width: 250px;
+  height: 254px;
+  border-radius: 30px;
+  background: #e0e0e0;
+  box-shadow: 15px 15px 30px #bebebe,
+             -15px -15px 30px #c4c4c5;
+}
+
+.dashboard-stats .stat-card p {
+  margin-top: 50px;
+}
+
+.filters {
+  margin-left: 300px;
+}
+
 
 /* Heading */
 form h2 {
@@ -93,3 +117,4 @@ form input[type="submit"]:active {
     width: 90%;
   }
 }
+

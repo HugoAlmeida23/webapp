@@ -29,7 +29,7 @@ function Home() {
   const [loading, setLoading] = useState(true); // Initialize loading state
 
   useEffect(() => {
-    const ano = ["2022", "2023", "2024","2025"];
+    const ano = ["2022", "2023", "2024", "2025"];
     setAnos(ano);
     getFaturas();
     fetchEntidades();
@@ -87,7 +87,7 @@ function Home() {
     setTotalIva(totalIVA.toFixed(2));
     setTotalSemIva(totalSemIVA.toFixed(2));
   };
-  
+
   const processGraficoData = (data) => {
     const months = [
       "Janeiro",
@@ -135,27 +135,52 @@ function Home() {
   };
 
   return (
-    <div>
+    <div className="main">
       <Header />
       <div className="dashboard-container">
         <h1>Dashboard</h1>
 
         <div className="dashboard-stats">
-        <div className="stat-card">
-          <h3>Número de Faturas</h3>
-          <p>{loading ? <i className="fas fa-spinner fa-spin"></i> : faturas.length}</p> {/* Display spinner if loading */}
-        </div>
+          <div className="stat-card">
+            <h3>Número de Faturas</h3>
+            <p>
+              {loading ? (
+                <i className="fas fa-spinner fa-spin"></i>
+              ) : (
+                faturas.length
+              )}
+            </p>{" "}
+            {/* Display spinner if loading */}
+          </div>
           <div className="stat-card">
             <h3>Total Gasto</h3>
-            <p>{loading ? <i className="fas fa-spinner fa-spin"></i> : totalGasto + "€"} </p>
+            <p>
+              {loading ? (
+                <i className="fas fa-spinner fa-spin"></i>
+              ) : (
+                totalGasto + "€"
+              )}{" "}
+            </p>
           </div>
           <div className="stat-card">
             <h3>Total IVA</h3>
-            <p>{loading ? <i className="fas fa-spinner fa-spin"></i> : totalIva + "€"}</p>
+            <p>
+              {loading ? (
+                <i className="fas fa-spinner fa-spin"></i>
+              ) : (
+                totalIva + "€"
+              )}
+            </p>
           </div>
           <div className="stat-card">
             <h3>Total sem IVA</h3>
-            <p>{loading ? <i className="fas fa-spinner fa-spin"></i> : totalSemIva + "€"}</p>
+            <p>
+              {loading ? (
+                <i className="fas fa-spinner fa-spin"></i>
+              ) : (
+                totalSemIva + "€"
+              )}
+            </p>
           </div>
         </div>
 
@@ -186,7 +211,7 @@ function Home() {
           </select>
         </div>
 
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="80%" height={450}>
           <AreaChart
             data={graficoData}
             margin={{ top: 20, right: 30, left: 20, bottom: 0 }}

@@ -43,6 +43,7 @@ html, body {
 
 
 .formSearchContainer {
+  
   max-height: 500px;
   overflow: visible; /* Change from hidden to visible */
   opacity: 1;
@@ -386,7 +387,7 @@ h3 {
   margin-top: 20px;
   padding-top: 1rem;
   border-top: 1px solid #eee;
-  grid-template-columns: repeat(3, 1fr); /* Sempre 3 colunas por linha */
+  grid-template-columns: repeat(2, 1fr); /* Sempre 3 colunas por linha */
   gap: 16px; /* Espaço entre as notas */
 }
 

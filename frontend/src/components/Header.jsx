@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../styles/Header.css";
+import simpleLogo from "../assets/simplelogo.png";
 
 function Header() {
   const [documentosDropdownOpen, setDocumentosDropdownOpen] = useState(false);
@@ -21,30 +22,26 @@ function Header() {
     <header className={`header bg-black ${collapsed ? "collapsed" : ""}`}>
       <aside>
         <button
-          className="menu-btn fa fa-chevron-left"
+          className={`menu-btn fa ${
+            collapsed ? "fa-chevron-right" : "fa-chevron-left"
+          }`}
           onClick={toggleCollapse}
         ></button>
         <a href="/" className="logo-wrapper">
-          <span className="fa-brands fa-uikit"></span>
+          <img
+            src={simpleLogo}
+            alt="UI Kit Logo"
+            style={{ width: "24px", height: "24px" }} // Adjust size as needed
+          />
           <span className="brand-name">TrofTech</span>
         </a>
         <div className="separator"></div>
         <ul className="menu-items">
-          {/* Home */}
-          <li>
-            <a href="./">
-              <span className="icon fa fa-house"></span>
-              <span className="item-name">Home</span>
-            </a>
-            <span className="tooltip">Home</span>
-          </li>
-
           {/* Dashboard */}
           <li>
             <a href="./" onClick={toggleCollapse}>
               <span className="icon fa fa-layer-group"></span>
               <span className="item-name">Dashboard</span>
-              
             </a>
             <span className="tooltip">Dashboard</span>
           </li>
