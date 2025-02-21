@@ -7,6 +7,7 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import { FaTrashAlt } from "react-icons/fa";
 import Note from "../components/Notes";
 import NotePopup from "../components/NotePopup";
+import { pdfjs } from "react-pdf"; // or from 'pdfjs-dist'
 
 function Fatura() {
   const [notes, setNotes] = useState([]);
@@ -30,6 +31,8 @@ function Fatura() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const wrapperRef = useRef(null);
+
+  pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
 
   useEffect(() => {
     fetchFaturas();
@@ -399,7 +402,7 @@ function Fatura() {
             {selectedFatura ? (
               fileUrl && fileUrl.endsWith(".pdf") ? (
                 <Worker
-                  workerUrl={`/node_modules/pdfjs-dist/build/pdf.worker.min.js`}
+                  workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}
                 >
                   <Viewer
                     fileUrl={fileUrl}
