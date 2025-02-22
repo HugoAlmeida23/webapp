@@ -8,6 +8,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import Note from "../components/Notes";
 import NotePopup from "../components/NotePopup";
 import { pdfjs } from "react-pdf"; // or from 'pdfjs-dist'
+import '@react-pdf-viewer/core/lib/styles/index.css';
 
 function Fatura() {
   const [notes, setNotes] = useState([]);
@@ -238,13 +239,19 @@ function Fatura() {
 
   return (
     <>
+    <head>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
       <div className="header">
         <Header />
       </div>
       <div className={`formSearchContainer ${isMinimized ? "minimized" : ""}`}>
         <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
           <div className="field-group">
-            <label>Entidade:</label>
+            <label>ENTIDADE</label>
             <div className="autocomplete-wrapper" ref={wrapperRef}>
               <input
                 type="text"
@@ -279,7 +286,7 @@ function Fatura() {
 
           {/* Campo de pesquisa por NIF */}
           <div className="field-group">
-            <label>NIF:</label>
+            <label>NIF</label>
             <input
               type="text"
               name="nif"
@@ -291,7 +298,7 @@ function Fatura() {
 
           {/* Campo de pesquisa por Classificação */}
           <div className="field-group">
-            <label>Classificação:</label>
+            <label>Classificação</label>
             <input
               type="text"
               name="nif"
@@ -303,7 +310,7 @@ function Fatura() {
 
           {/* Campo de pesquisa por Tipo de Documento */}
           <div className="field-group">
-            <label>Tipo de Documento:</label>
+            <label>Tipo de Documento</label>
             <select name="tipo" value={tipo} onChange={handleTipoChange}>
               <option value="">Selecione um tipo de documento</option>
               {uniqueTipo.map((tipo, index) => (
@@ -316,7 +323,7 @@ function Fatura() {
 
           {/* Filtro por intervalo de datas */}
           <div className="field-group">
-            <label>Data de Início:</label>
+            <label>Data de Início</label>
             <input
               type="date"
               name="dataInicio"
@@ -326,7 +333,7 @@ function Fatura() {
           </div>
 
           <div className="field-group">
-            <label>Data de Término:</label>
+            <label>Data de Término</label>
             <input
               type="date"
               name="dataTermino"
@@ -340,10 +347,10 @@ function Fatura() {
             type="submit"
             onClick={handleSearch}
           >
-            Pesquisar
+            <span class="span">🔎</span>
           </button>
           <button className="searchButtons" type="submit" onClick={handleClear}>
-            Limpar Filtros
+          <span class="span">🧹</span>
           </button>
         </form>
       </div>
@@ -372,23 +379,12 @@ function Fatura() {
                         </span>
                       </div>
                       <div className="fatura-details">
-                        <span className="fatura-entidade">
-                          {fatura.description}
-                        </span>
+                        
                         <span className="fatura-valor">
                           €{parseFloat(fatura.total_fatura).toFixed(2)}
                         </span>
                       </div>
                     </div>
-                    <button
-                      className="delete-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteFatura(fatura.id);
-                      }}
-                    >
-                      <FaTrashAlt />
-                    </button>
                   </div>
                 ))}
               </div>
@@ -397,19 +393,22 @@ function Fatura() {
 
           <div
             className="fatura-pdf-viewer"
-            style={{ height: isMinimized ? "100vh" : "83vh" }}
+            style={{
+              height: isMinimized ? "100vh" : "83vh",
+            }}
           >
             {selectedFatura ? (
               fileUrl && fileUrl.endsWith(".pdf") ? (
-                <Worker
-                  workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}
-                >
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
                   <Viewer
                     fileUrl={fileUrl}
+                    theme={{
+                      theme: "darkblue", // Define o tema escuro
+                    }}
                     style={{
-                      width: "100%",
+                      width: "80%",
                       maxHeight: "100%",
-                      overflow: "auto",
+                      overflow: "auto"
                     }}
                   />
                 </Worker>
