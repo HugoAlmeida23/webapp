@@ -3,8 +3,7 @@
   background-color: #172536; /* Fundo claro */
   padding: 10px; /* Espaçamento interno maior */
   margin: 10px 0; /* Espaçamento entre notas */
-  max-width: 300px;
-  max-height: 300px;
+  width: 300px;
   border: 1px solid #e0e0e0; /* Bordas suaves */
   border-radius: 12px; /* Bordas arredondadas */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra sutil */
@@ -13,29 +12,31 @@
 }
 
 /* Título da Nota */
-.note-title {
-  font-size: 0.8rem; /* Maior destaque para o título */
+.note-container .note-title {
+  font-size: 0.7rem; /* Maior destaque para o título */
   font-weight: bold; /* Negrito */
-  color: #2a2a2a; /* Texto escuro para contraste */
+  color: #ffffff; /* Texto escuro para contraste */
   margin-bottom: 10px; /* Espaço entre título e conteúdo */
   text-transform: capitalize; /* Primeira letra de cada palavra em maiúscula */
   border-bottom: 1px solid #ddd; /* Linha abaixo do título */
   padding-bottom: 5px; /* Espaço interno abaixo do título */
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Corpo do Conteúdo */
-.note-content {
-  color: #4a4a4a; /* Cinza escuro para texto */
-  font-size: 0.5rem;
+.note-container .note-content {
+  color: #ffffff; /* Cinza escuro para texto */
+  font-size: 0.8rem;
   line-height: 1.6; /* Espaçamento entre linhas */
   margin: 15px 0; /* Espaçamento entre conteúdo e data */
   text-align: justify; /* Texto justificado para melhor leitura */
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Data da Nota */
-.note-date {
+.note-container .note-date {
   font-size: 0.8rem;
-  color: #636262; /* Cinza claro */
+  color: #ffffff; /* Cinza claro */
   text-align: right; /* Alinhado à direita */
   position: absolute; /* Posicionamento absoluto */
   top: 10px; /* Distância do topo */
@@ -43,10 +44,11 @@
   border-top: none; /* Remover a linha acima da data */
   margin-top: 0; /* Remover o espaço adicional */
   padding-top: 0; /* Remover o padding superior */
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Botão de Exclusão */
-.delete-button-note {
+.note-container .delete-button-note {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,14 +63,14 @@
   transition: all 0.3s ease;
 }
 
-.delete-button-note:hover {
+.note-container .delete-button-note:hover {
   background: #ff4c4c;
   color: white;
   box-shadow: 0 3px 10px rgba(255, 76, 76, 0.3);
   cursor: pointer;
 }
 
-.delete-button-note:active {
+.note-container .delete-button-note:active {
   transform: scale(0.95);
 }
 

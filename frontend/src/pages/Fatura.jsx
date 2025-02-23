@@ -293,7 +293,7 @@ function Fatura() {
 
           {/* Campo de pesquisa por Classificação */}
           <div className="field-group">
-            <label>Classificação</label>
+            <label>CLASSIFICAÇÃO</label>
             <input
               type="text"
               name="nif"
@@ -305,7 +305,7 @@ function Fatura() {
 
           {/* Campo de pesquisa por Tipo de Documento */}
           <div className="field-group">
-            <label>Tipo de Documento</label>
+            <label>DOCUMENTO</label>
             <select name="tipo" value={tipo} onChange={handleTipoChange}>
               <option value="">Selecione um tipo de documento</option>
               {uniqueTipo.map((tipo, index) => (
@@ -318,7 +318,7 @@ function Fatura() {
 
           {/* Filtro por intervalo de datas */}
           <div className="field-group">
-            <label>Data de Início</label>
+            <label>INÍCIO</label>
             <input
               type="date"
               name="dataInicio"
@@ -328,7 +328,7 @@ function Fatura() {
           </div>
 
           <div className="field-group">
-            <label>Data de Término</label>
+            <label>FIM</label>
             <input
               type="date"
               name="dataTermino"
@@ -350,7 +350,7 @@ function Fatura() {
         </form>
       </div>
       <div className="fatura-container">
-        <div className="fatura-layout" style={{ height: "85%" }}>
+        <div className="fatura-layout" style={{ height: "80%" }}>
           <div className="fatura-sidebar">
             <h3>Documentos</h3>
             {loading ? (
@@ -419,6 +419,7 @@ function Fatura() {
                     <label>NIF</label>
                     <input
                       type="text"
+                      className="inputText"
                       value={selectedFatura.nif || ""} // Valor exibido no input
                       onChange={(e) =>
                         setSelectedFatura({
@@ -432,6 +433,7 @@ function Fatura() {
                     <label>Entidade</label>
                     <input
                       type="text"
+                      className="inputText"
                       value={selectedFatura.entidade || ""} // Mostra o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -447,6 +449,7 @@ function Fatura() {
                     <label>País</label>
                     <input
                       type="text"
+                      className="inputText"
                       value={selectedFatura.pais || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -461,6 +464,7 @@ function Fatura() {
                     <label>Data</label>
                     <input
                       type="date"
+                      className="inputText"
                       value={selectedFatura.data || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -477,6 +481,7 @@ function Fatura() {
                     <label>IVA 6%</label>
                     <input
                       type="number"
+                      className="inputText"
                       value={selectedFatura.iva_6 || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -491,6 +496,7 @@ function Fatura() {
                     <label>IVA 23%</label>
                     <input
                       type="number"
+                      className="inputText"
                       value={selectedFatura.iva_23 || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -507,6 +513,7 @@ function Fatura() {
                     <label>Total IVA</label>
                     <input
                       type="number"
+                      className="inputText"
                       value={selectedFatura.total_iva || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -521,6 +528,7 @@ function Fatura() {
                     <label>Total s/IVA</label>
                     <input
                       type="number"
+                      className="inputText"
                       value={
                         selectedFatura.total_fatura -
                           selectedFatura.total_iva || 0
@@ -541,6 +549,7 @@ function Fatura() {
                     <label>Valor Final</label>
                     <input
                       type="number"
+                      className="inputText"
                       value={selectedFatura.total_fatura || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -555,6 +564,7 @@ function Fatura() {
                     <label>Número da Fatura</label>
                     <input
                       type="text"
+                      className="inputText"
                       value={selectedFatura.numero_fatura || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -569,6 +579,7 @@ function Fatura() {
                   <div>
                     <label>Classificação</label>
                     <select
+                      className="inputText"
                       value={selectedFatura.classificacao || ""}
                       onChange={(e) =>
                         setSelectedFatura({
@@ -684,6 +695,7 @@ function Fatura() {
                   <div>
                     <label>Tipo</label>
                     <select
+                      className="inputText"
                       value={selectedFatura.tipo || ""} // Mostra o tipo associado, ou "" caso não exista
                       onChange={(e) =>
                         setSelectedFatura({
@@ -715,6 +727,7 @@ function Fatura() {
                     <label>Descrição</label>
                     <input
                       type="text"
+                      className="inputText"
                       value={selectedFatura.description || ""} // Exibe o valor atual ou vazio
                       onChange={(e) =>
                         setSelectedFatura({
@@ -725,7 +738,18 @@ function Fatura() {
                     />
                   </div>
                 </div>
-                <h2 className="notas-title">Notas</h2>
+                <div className="sectionNotas">
+                  <h2 className="notas-title">Notas</h2>
+                  <button
+                    className="button-33"
+                    onClick={() => setPopupOpen(true)}
+                  >
+                    ➕
+                  </button>
+                  <button type="submit" className="button-33">
+                    💾
+                  </button>
+                </div>
                 <div className="notes-container">
                   {notes
                     .filter((note) => {
@@ -741,17 +765,7 @@ function Fatura() {
                   closePopup={() => setPopupOpen(false)}
                   createNote={createNote}
                 />
-                <div className="buttoncontainer">
-                  <button
-                    className="button-33"
-                    onClick={() => setPopupOpen(true)}
-                  >
-                    Adicionar Nota
-                  </button>
-                  <button type="submit" className="button-33">
-                    Guardar Alterações
-                  </button>
-                </div>
+                <div className="buttoncontainer"></div>
               </div>
             ) : (
               <p>Selecione uma fatura para editar os detalhes.</p>
