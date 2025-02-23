@@ -24,7 +24,6 @@
   left: 0;
   right: 0;
   height: 0px; /* Ajuste conforme necessário */
-  background: white; /* Garante que o conteúdo não apareça por trás */
   box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opcional para melhor visualização */
 }
 
@@ -38,6 +37,12 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
+body, html {
+  overflow: hidden; /* Prevents scrolling */
+  height: 100%; /* Ensure the height is 100% */
+}
+
+
 * {
   margin: 0;
   padding: 0;
@@ -46,22 +51,7 @@ body {
 
 
 .formSearchContainer {
-  background-color: #0f0d2b; 
   margin-top: 15px;
-  overflow: visible; /* Change from hidden to visible */
-  opacity: 1;
-  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, margin-bottom 0.5s ease-in-out;
-
-    transition: all 0.3s ease;
- 
-  
-}
-
-.formSearchContainer.minimized {
-  max-height: 0;
-  opacity: 0;
-  margin-bottom: 0;
-  overflow: hidden; /* Keep hidden when minimized */
 }
 
 /* FORM SEARCH (mantido igual) */
@@ -75,15 +65,22 @@ body {
   margin: 0 auto;
   padding: 20px;
   background-color: #20334b;
+  background-color: #20334b;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
+.formSearch button:hover {
+  background-color: #007bff; /* ou qualquer cor desejada */
+}
+
+
 .formSearch .field-group label{
   font-weight: 600;
   font-size: 14px;
   font-family: 'Poppins', sans-serif;
+  color: #ffffff;
 }
 
 .formSearch .field-group {
@@ -98,6 +95,7 @@ body {
   padding: 10px;
   font-size: 11px;
   border: 1px solid #ddd;
+  background-color: #f4f4f8;
   border-radius: 10px;
   box-sizing: border-box;
   transition: border-color 0.3s ease;
@@ -118,7 +116,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+  color: #e8e8e8;
   background-color: #212121;
   width: 45px;
   height: 45px;
@@ -196,7 +194,7 @@ body {
 /* SIDEBAR DE FATURAS */
 .fatura-sidebar {
   background-color: #0f0d2b; 
-  width: 20%;
+  width: 30%;
   min-width: 280px;
   margin-left: 65px;
   padding: 1rem;
@@ -246,7 +244,7 @@ body {
 }
 
 .fatura-header {
-  color: #FFF;
+  
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -382,7 +380,7 @@ h3 {
 /* DETALHES DA FATURA */
 .fatura-details-container {
   width: 30%;
-  background: #fff;
+  background: #20334b;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -402,16 +400,28 @@ h3 {
 
 .fatura-details-container label {
   font-size: 0.7rem;
-  color: #495057;
+  color: #ffffff;
   margin-bottom: 0.25rem;
   display: block;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+.fatura-details-container p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
 }
 
 .fatura-details-container input,
 .fatura-details-container select {
   width: 100%;
   padding: 0.2rem;
-  border: 1px solid #dee2e6;
+  background-color: #f4f4f8;
+  border: 1px solid #75818d;
   border-radius: 4px;
   font-size: 0.75rem;
 }
@@ -433,51 +443,77 @@ h3 {
   margin-top: 10px;
 }
 
-.button-33 {
-  background-color: #0000FF; /* Pure blue */
-  border-radius: 100px;
-  box-shadow: rgba(0, 0, 255, 0.2) 0 -25px 18px -14px inset,
-              rgba(0, 0, 255, 0.15) 0 1px 2px,
-              rgba(0, 0, 255, 0.15) 0 2px 4px,
-              rgba(0, 0, 255, 0.15) 0 4px 8px,
-              rgba(0, 0, 255, 0.15) 0 8px 16px,
-              rgba(0, 0, 255, 0.15) 0 16px 32px;
-  color: #ffffff; /* White text */
+/* From Uiverse.io by gharsh11032000 */ 
+.buttoncontainer .button-33 {
+  margin-top: 45px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e8e8e8;
+  background-color: #212121;
+  width: 150px;
+  height: 45px;
+  font-size: 12px;
+  text-transform: uppercase;
+  border: 2px solid #212121;
+  border-radius: 10px;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+  box-shadow: 5px 5px 2px rgba(0, 0, 0, 0.15),
+    2px 2px 2px rgba(0, 0, 0, 0.1),
+    -3px -3px 2px rgba(255, 255, 255, 0.05),
+    -2px -2px 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
   cursor: pointer;
-  display: inline-block;
-  font-family: CerebriSans-Regular, -apple-system, system-ui, Roboto, sans-serif;
-  padding: 7px 20px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 250ms;
-  border: 0;
-  font-size: 16px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+  font-family: 'Poppins', sans-serif;
+  margin-right: 10px;
+  margin-top: 10px;
 }
 
-.button-33:hover {
-  box-shadow: rgba(0, 0, 200, 0.35) 0 -25px 18px -14px inset,
-              rgba(0, 0, 200, 0.25) 0 1px 2px,
-              rgba(0, 0, 200, 0.25) 0 2px 4px,
-              rgba(0, 0, 200, 0.25) 0 4px 8px,
-              rgba(0, 0, 200, 0.25) 0 8px 16px,
-              rgba(0, 0, 200, 0.25) 0 16px 32px;
-  transform: scale(1.05) rotate(-1deg);
-  background-color: #0000CC; /* Darker blue on hover */
+.buttoncontainer .button-33 .span {
+  position: relative;
+  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
 }
 
+.buttoncontainer .button-33::before {
+  content: "";
+  position: absolute;
+  background-color: #e8e8e8;
+  width: 100%;
+  height: 100%;
+  left: 0%;
+  bottom: 0%;
+  transform: translate(-100%, 100%);
+  border-radius: 10px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
 
+.buttoncontainer .button-33:hover::before {
+  transform: translate(0,0);
+  transition-delay: 0.4s;
+}
 
+.buttoncontainer .button-33:hover .span {
+  scale: 1.2;
+}
+
+.buttoncontainer .button-33:hover {
+  box-shadow: none;
+}
+
+.buttoncontainer .button-33:active {
+  scale: 0.95;
+}
 
 
 .notas-title {
   font-size: 1.1rem;
-  color: #2c3e50;
+  color: #ffffff;
   margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
 }
-
 
 /* LOADING SPINNER */
 .loading-spinner {

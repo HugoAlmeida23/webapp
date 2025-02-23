@@ -1,6 +1,6 @@
 /* Container de cada Nota */
 .note-container {
-  background-color: #f9f9f9; /* Fundo claro */
+  background-color: #172536; /* Fundo claro */
   padding: 10px; /* Espaçamento interno maior */
   margin: 10px 0; /* Espaçamento entre notas */
   max-width: 300px;
@@ -26,7 +26,7 @@
 /* Corpo do Conteúdo */
 .note-content {
   color: #4a4a4a; /* Cinza escuro para texto */
-  font-size: 0.7rem;
+  font-size: 0.5rem;
   line-height: 1.6; /* Espaçamento entre linhas */
   margin: 15px 0; /* Espaçamento entre conteúdo e data */
   text-align: justify; /* Texto justificado para melhor leitura */
@@ -65,6 +65,7 @@
   background: #ff4c4c;
   color: white;
   box-shadow: 0 3px 10px rgba(255, 76, 76, 0.3);
+  cursor: pointer;
 }
 
 .delete-button-note:active {

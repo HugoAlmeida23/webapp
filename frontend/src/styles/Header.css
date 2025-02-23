@@ -63,9 +63,16 @@ a {
   font-size: 25px;
 }
 
+.item-name {
+  font-weight: 300;
+  font-family: 'Poppins', sans-serif;
+}
+
 .brand-name {
   font-size: 20px;
   transition: .3s;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
 }
 
 .collapsed .brand-name {
@@ -208,5 +215,6 @@ main {
 }
 
 .submenu-items {
-  font-size: 15px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
 }

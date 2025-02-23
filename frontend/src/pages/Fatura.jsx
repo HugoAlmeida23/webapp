@@ -8,7 +8,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import Note from "../components/Notes";
 import NotePopup from "../components/NotePopup";
 import { pdfjs } from "react-pdf"; // or from 'pdfjs-dist'
-import '@react-pdf-viewer/core/lib/styles/index.css';
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
 function Fatura() {
   const [notes, setNotes] = useState([]);
@@ -28,7 +28,6 @@ function Fatura() {
   const [entidadesDisponiveis, setEntidadesDisponiveis] = useState([]);
   const [content, setContent] = useState([]);
   const [faturaId, setFaturaId] = useState(null);
-  const [isMinimized, setIsMinimized] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const wrapperRef = useRef(null);
@@ -50,10 +49,6 @@ function Fatura() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const toggleMinimize = () => {
-    setIsMinimized((prevState) => !prevState);
-  };
 
   const getNotes = () => {
     api
@@ -239,16 +234,16 @@ function Fatura() {
 
   return (
     <>
-    <head>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-    rel="stylesheet"
-  />
-</head>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <div className="header">
         <Header />
       </div>
-      <div className={`formSearchContainer ${isMinimized ? "minimized" : ""}`}>
+      <div className="formSearchContainer">
         <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
           <div className="field-group">
             <label>ENTIDADE</label>
@@ -350,15 +345,12 @@ function Fatura() {
             <span class="span">🔎</span>
           </button>
           <button className="searchButtons" type="submit" onClick={handleClear}>
-          <span class="span">🧹</span>
+            <span class="span">🧹</span>
           </button>
         </form>
       </div>
       <div className="fatura-container">
-        <div
-          className="fatura-layout"
-          style={{ height: isMinimized ? "100%" : "85%" }}
-        >
+        <div className="fatura-layout" style={{ height: "85%" }}>
           <div className="fatura-sidebar">
             <h3>Documentos</h3>
             {loading ? (
@@ -379,7 +371,6 @@ function Fatura() {
                         </span>
                       </div>
                       <div className="fatura-details">
-                        
                         <span className="fatura-valor">
                           €{parseFloat(fatura.total_fatura).toFixed(2)}
                         </span>
@@ -390,11 +381,10 @@ function Fatura() {
               </div>
             )}
           </div>
-
           <div
             className="fatura-pdf-viewer"
             style={{
-              height: isMinimized ? "100vh" : "83vh",
+              height: "82vh",
             }}
           >
             {selectedFatura ? (
@@ -408,7 +398,7 @@ function Fatura() {
                     style={{
                       width: "80%",
                       maxHeight: "100%",
-                      overflow: "auto"
+                      overflow: "auto",
                     }}
                   />
                 </Worker>
