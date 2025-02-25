@@ -4,89 +4,68 @@ import simpleLogo from "../assets/simplelogo.png";
 
 function Header() {
   const [documentosDropdownOpen, setDocumentosDropdownOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(true); // State for sidebar collapse
-  const [minimized, setMinimized] = useState(false); // State for minimization of sidebar
+  const [collapsed, setCollapsed] = useState(true); // Sidebar collapsed by default
 
-  // Toggle the sidebar collapse state
-  const toggleCollapse = () => {
+  // Toggle sidebar expansion/collapse
+  const toggleSidebar = () => {
     setCollapsed(!collapsed);
-    setMinimized(!minimized); // Toggle minimization of the sidebar
   };
 
-  // Toggle the documentos dropdown
-  const toggleDocumentosDropdown = () => {
-    setDocumentosDropdownOpen(!documentosDropdownOpen);
+  // Expand the sidebar when hovering
+  const handleMouseEnter = () => {
+    setCollapsed(false);
+  };
+
+  // Collapse the sidebar when mouse leaves
+  const handleMouseLeave = () => {
+    setCollapsed(true);
   };
 
   return (
-    
-    <header className={`header bg-black ${collapsed ? "collapsed" : ""}`}><head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <aside>
-        <button
-          className={`menu-btn fa ${
-            collapsed ? "fa-chevron-right" : "fa-chevron-left"
-          }`}
-          onClick={toggleCollapse}
-        ></button>
+    <div className={collapsed ? "collapsed" : ""}>
+      <aside
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+
+        
         <a href="/" className="logo-wrapper">
           <img
             src={simpleLogo}
             alt="UI Kit Logo"
-            style={{ width: "24px", height: "24px" }} // Adjust size as needed
+            style={{ width: "24px", height: "24px" }}
           />
           <span className="brand-name">TrofTech</span>
         </a>
+        
         <div className="separator"></div>
+        
         <ul className="menu-items">
-          {/* Dashboard */}
           <li>
-            <a href="./" onClick={toggleCollapse}>
-              <span className="icon fa fa-layer-group"></span>
+            <a href="./">
+              <span className="icon fas fa-tachometer-alt"></span>
               <span className="item-name">Dashboard</span>
             </a>
-            <span className="tooltip">Dashboard</span>
+            <div className="tooltip">Dashboard</div>
           </li>
-
-          {/* Documentos (with Submenu) */}
-          <li
-            className={`menu-item docs ${documentosDropdownOpen ? "open" : ""}`}
-            onClick={toggleDocumentosDropdown}
-          >
-            <a href="#">
-              <span className="icon fa fa-file-alt"></span>
-              <span className="item-name doc">Documentos</span>
-              <span
-                className={
-                  documentosDropdownOpen
-                    ? "fa-solid fa-square-caret-up"
-                    : "fa-solid fa-square-caret-down"
-                }
-              ></span>
+          <li>
+            <a href="./faturas">
+              <span className="icon fas fa-file-invoice"></span>
+              <span className="item-name">Gestor de Documentos</span>
             </a>
-            <span className="tooltip doc">Documentos</span>
-            {documentosDropdownOpen && (
-              <ul className="submenu">
-                <li>
-                  <a className="submenu-items" href="./faturas">
-                    <i className="fa fa-folder-open"></i> Gestor de Documentos
-                  </a>
-                </li>
-                <li>
-                  <a className="submenu-items" href="./inserirFatura">
-                    <i className="fa fa-upload"></i> Inserir Documentos
-                  </a>
-                </li>
-              </ul>
-            )}
+            <div className="tooltip">Gestor de Documentos</div>
+          </li>
+          <li>
+            <a href="./inserirFatura">
+              <span className="icon fas fa-file-upload"></span>
+              <span className="item-name">Inserir Documentos</span>
+            </a>
+            <div className="tooltip">Inserir Documentos</div>
           </li>
         </ul>
       </aside>
-    </header>
+    
+    </div>
   );
 }
 

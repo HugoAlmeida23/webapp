@@ -1,132 +1,178 @@
+/* Modernized CreateFatura.css - Using same theme as Dashboard */
+
+:root {
+  --primary-color: #ffffff;
+  --primary-dark: #0056b3;
+  --background-light: #0f0d2b;
+  --card-bg: #20334b;
+  --accent-blue: #062e58;
+  --text-dark: #ffffff;
+  --text-light: rgba(255, 255, 255, 0.7);
+  --border-radius: 12px;
+  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; /* If needed */
+}
+
 /* Container principal da página de inserção de faturas */
 .invoice-form-container {
-    max-width: 600px;
-    margin:auto; 
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Título */
-  .invoice-form-container h2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  /* Labels */
-  .invoice-form-container label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 8px;
-    display: block;
-  }
-  
-  /* Inputs de texto */
-  .invoice-form-container input[type="text"],
-  .invoice-form-container input[type="file"] {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 16px;
-    background-color: #fff;
-    transition: border-color 0.3s;
-  }
-  
-  .invoice-form-container input[type="text"]:focus,
-  .invoice-form-container input[type="file"]:focus {
-    border-color: #1c6eda; /* Cor verde para foco */
-    outline: none;
-  }
-  
-  /* Botão de envio */
-   /* Botão de envio */
-   .invoice-form-container button {
-    background: #1c6eda;
-    border: none;
-    color: #ffffff;
-    width: 100%;
-    font-size: 15px;
-    padding: 10px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 3.2px 4.8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .invoice-form-container button:hover {
-    background: #ffffff;
-    color: #1c6eda;
-    box-shadow: 0 4.8px 8px rgba(0, 0, 0, 0.15);
-  }
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 30px;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  color: var(--text-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
+.input-field {
+  max-width: 620px;
+}
+/* Título */
+.invoice-form-container h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 30px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
 
-  /* Estilo para o campo de arquivo */
-  .invoice-form-container input[type="file"] {
-    padding: 8px;
-    font-size: 14px;
-  }
-  
-  .status-indicator {
-    margin-left: auto;
-    font-size: 0.9rem;
-    color: #666;
-  }
-  
-  .preview-header {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    background: #f5f5f5;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .preview-container {
-    position: relative;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-  }
-  
-  .pdf-viewer {
-    height: 400px;
-  }
+/* Labels */
+.invoice-form-container label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-light);
+  margin-bottom: 10px;
+  display: block;
+  font-family: 'Poppins', sans-serif;
+}
 
-  /* Estilos para as miniaturas */
+/* Inputs de texto */
+.invoice-form-container input[type="text"],
+.invoice-form-container input[type="file"] {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-dark);
+  transition: all 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.invoice-form-container input[type="text"]:focus,
+.invoice-form-container input[type="file"]:focus {
+  border-color: var(--accent-blue);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(6, 46, 88, 0.5);
+}
+
+/* Botão de envio */
+.invoice-form-container button {
+  background: var(--accent-blue);
+  border: 1px solid transparent;
+  color: var(--primary-color);
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-light);
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 25px;
+}
+
+.invoice-form-container button:hover {
+  background: rgba(6, 46, 88, 0.8);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.invoice-form-container button:disabled {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estilo para o campo de arquivo */
+.invoice-form-container input[type="file"] {
+  padding: 15px;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.invoice-form-container input[type="file"]:hover {
+  border-color: var(--accent-blue);
+  background-color: rgba(6, 46, 88, 0.1);
+}
+
+.invoice-form-container input[type="file"]::file-selector-button {
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 15px;
+  transition: all 0.3s;
+}
+
+.invoice-form-container input[type="file"]::file-selector-button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Estilos para as miniaturas */
 .thumbnails-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
 }
 
 .thumbnail-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s;
-  background: white;
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-light);
+  height: 250px;
+  display: flex;
+  flex-direction: column;
 }
 
 .thumbnail-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--accent-blue);
 }
 
 .thumbnail-content {
-  height: 200px;
+  flex: 1;
   overflow: hidden;
   position: relative;
+  background-color: #fff;
 }
 
 .thumbnail-content .rpv-core__viewer {
@@ -134,16 +180,34 @@
 }
 
 .thumbnail-footer {
-  padding: 0.5rem;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8f9fa;
-  border-top: 1px solid #eee;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.thumbnail-footer span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-light);
 }
 
 .status-indicator {
   font-size: 1.2rem;
+}
+
+/* Empty state message */
+.thumbnails-container p {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-light);
+  padding: 40px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  font-style: italic;
 }
 
 /* Estilos para o modal */
@@ -153,44 +217,94 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg);
   width: 90%;
-  max-width: 1000px;
+  max-width: 1200px;
   max-height: 90vh;
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--border-radius);
+  padding: 20px;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
 .close-button {
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 24px;
   cursor: pointer;
-  color: #666;
-  padding: 0 0.5rem;
+  color: var(--text-light);
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s;
 }
 
 .close-button:hover {
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary-color);
 }
 
 .full-viewer {
-  height: 70vh;
+  height: 75vh;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+/* For screens smaller than 768px */
+@media (max-width: 768px) {
+  .invoice-form-container {
+    padding: 20px;
+    margin: 20px 15px;
+  }
+  
+  .thumbnail-card {
+    height: 220px;
+  }
+  
+  .thumbnails-container {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+  }
+  
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .full-viewer {
+    height: 65vh;
+  }
 }

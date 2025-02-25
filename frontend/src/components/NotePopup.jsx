@@ -1,14 +1,20 @@
 import React, { useState } from "react";
-import "../styles/NotePopup.css";  // Adicione um arquivo CSS para o estilo do popup
+import "../styles/NotePopup.css"; 
 
-function NotePopup({ isOpen, closePopup, createNote }) {
+function NotePopup({ isOpen, closePopup, createNote, fatura_id }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createNote({ title, content });
-    closePopup();  // Fecha o popup após criar a nota
+    
+    if (!fatura_id) {
+      alert("Erro: Nenhuma fatura selecionada.");
+      return;
+    }
+
+    createNote({ title, content, fatura_id }); // Use fatura_id from props
+    closePopup();
   };
 
   return isOpen ? (
@@ -33,10 +39,12 @@ function NotePopup({ isOpen, closePopup, createNote }) {
               required
             />
           </div>
-          <button type="submit">Criar Nota</button>
-          <button type="button" onClick={closePopup}>
+          <div className="button-container">
+          <button className="button-33 popup" type="submit">Criar Nota</button>
+          <button className="button-33 popup" type="button" onClick={closePopup}>
             Fechar
           </button>
+          </div>
         </form>
       </div>
     </div>

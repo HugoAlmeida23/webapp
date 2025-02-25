@@ -58,7 +58,7 @@
   border: none;
   color: #ff4c4c; /* Vermelho suave */
   font-size: 1.2rem;
-  padding: 6px 10px;
+  padding: 1px 4px;
   border-radius: 8px; /* Bordas arredondadas */
   transition: all 0.3s ease;
 }

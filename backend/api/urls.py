@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from .views import FaturaUpdate
 
 # Criar um router para o ViewSet de Faturas
 router = DefaultRouter()
@@ -14,7 +15,8 @@ urlpatterns = [
     # Rotas para Faturas
     path("faturas/", views.FaturaListCreate.as_view(), name="fatura-create"),
     path("faturas/delete/<int:pk>/", views.FaturaDelete.as_view(), name="delete-fatura"),
-
+    path("faturas/update/<int:pk>/", views.FaturaUpdate.as_view(), name="update-fatura"),
+    
     # Lista de Entidades únicas
     path("faturas/entidades/", views.EntidadeList.as_view(), name="entidade-list"),
 

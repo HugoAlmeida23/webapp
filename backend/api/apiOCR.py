@@ -95,7 +95,7 @@ def process_with_gemini(ocr_text):
     Juros e Encargos Financeiros → "79 - Juros e Encargos Financeiros"
     "79.1 - Juros Suportados"
     "79.2 - Diferenças de Câmbio"
-    Se nenhuma das classificações acima puder ser determinada a partir do texto do documento, retorne "Indefinido".
+    É obrigatório associar uma classificação.
     
     ### **Exemplos de tipo de documento ("TD")**  
     - `"Fatura"`  

@@ -168,6 +168,47 @@ class FaturaDelete(generics.DestroyAPIView):
     def get_queryset(self):
         return Fatura.objects.filter(user=self.request.user)
 
+class FaturaUpdate(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request, pk):
+        try:
+            # Ensure the fatura exists and belongs to the user
+            fatura = Fatura.objects.get(pk=pk, user=request.user)
+            
+            # Log incoming data for debugging
+            print(f"Received data: {request.data}")
+            
+            serializer = FaturaSerializer(fatura, data=request.data, partial=True)
+            
+            if serializer.is_valid():
+                updated_fatura = serializer.save()
+                return Response({
+                    'status': 'success',
+                    'message': 'Fatura updated successfully',
+                    'data': FaturaSerializer(updated_fatura).data
+                }, status=status.HTTP_200_OK)
+            else:
+                print(f"Serializer errors: {serializer.errors}")
+                return Response({
+                    'status': 'error',
+                    'message': 'Validation failed',
+                    'errors': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        except Fatura.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Fatura not found or access denied'
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
+            return Response({
+                'status': 'error',
+                'message': 'An unexpected error occurred',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 # Gerencia Faturas (CRUD)
 class FaturaViewSet(viewsets.ModelViewSet):
     queryset = Fatura.objects.all()

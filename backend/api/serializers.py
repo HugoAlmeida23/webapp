@@ -15,12 +15,14 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = ["id", "title", "content", "created_at", "author", "fatura_id"]
-        extra_kwargs = {"author": {"read_only": True}}
+        extra_kwargs = {
+            "author": {"read_only": True},
+            "fatura_id": {"required": True},  # Ensure it's required
+        }
         
         
 class FaturaSerializer(serializers.ModelSerializer):

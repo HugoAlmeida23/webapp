@@ -7,6 +7,8 @@ import Home from "./pages/Home";
 import InserirFatura from "./pages/CreateFatura";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Logout() {
   localStorage.clear();
@@ -21,6 +23,7 @@ function RegisterAndLogout() {
 function App() {
   return (
     <BrowserRouter>
+     <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route
           path="/"

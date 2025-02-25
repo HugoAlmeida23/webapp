@@ -4,33 +4,74 @@ import "../styles/Fatura.css";
 import Header from "../components/Header";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import { FaTrashAlt } from "react-icons/fa";
+import {
+  FaTrashAlt,
+  FaPlus,
+  FaSave,
+  FaSearch,
+  FaFilter,
+  FaTimes,
+  FaInfo,
+  FaFileInvoice,
+  FaPrint,
+  FaSearchMinus,
+  FaSearchPlus,
+  FaExpand,
+  FaCompress,
+  FaUndo,
+} from "react-icons/fa";
 import Note from "../components/Notes";
 import NotePopup from "../components/NotePopup";
-import { pdfjs } from "react-pdf"; // or from 'pdfjs-dist'
+import { pdfjs } from "react-pdf";
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import { toast } from "react-toastify";
 
 function Fatura() {
   const [notes, setNotes] = useState([]);
   const [isPopupOpen, setPopupOpen] = useState(false);
-  const [scale, setScale] = useState(1.5);
   const [faturas, setFaturas] = useState([]);
   const [filteredFaturas, setFilteredFaturas] = useState([]);
-  const [filterField, setFilterField] = useState(""); // Estado para armazenar o campo do filtro (ex. "entidade", "data", etc.)
-  const [entidade, setEntidade] = useState(""); // Estado para armazenar o valor do filtro
-  const [nif, setNif] = useState(""); // Estado para
-  const [tipo, setTipo] = useState(""); // Estado]
-  const [dataInicio, setdataInicio] = useState(""); //
-  const [dataTermino, setdataTermino] = useState(""); //
+  const [entidade, setEntidade] = useState("");
+  const [nif, setNif] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [classificacao, setClassificacao] = useState("");
+  const [dataInicio, setdataInicio] = useState("");
+  const [dataTermino, setdataTermino] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedFatura, setSelectedFatura] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
   const [entidadesDisponiveis, setEntidadesDisponiveis] = useState([]);
-  const [content, setContent] = useState([]);
   const [faturaId, setFaturaId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [isDetailsPanelVisible, setIsDetailsPanelVisible] = useState(false);
   const wrapperRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef(null);
+
+  // Function to handle zoom with better precision
+  const handleZoom = (newScale) => {
+    setScale(Math.round(newScale * 100) / 100);
+  };
+
+  // Toggle fullscreen mode
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      handleZoom(1.2)
+      containerRef.current.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+      handleZoom(1)
+    }
+  };
+
+  // Create a key that changes when scale changes to force re-render
+  const viewerKey = `pdf-viewer-${scale}`;
 
   pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
 
@@ -38,8 +79,7 @@ function Fatura() {
     fetchFaturas();
     fetchEntidades();
     getNotes();
-    console.log("Viewport Width:", window.innerWidth);
-    console.log("Viewport Height:", window.innerHeight);
+
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -48,6 +88,7 @@ function Fatura() {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+
   }, []);
 
   const getNotes = () => {
@@ -56,30 +97,34 @@ function Fatura() {
       .then((res) => res.data)
       .then((data) => {
         setNotes(data);
-        console.log(data);
       })
-      .catch((err) => alert(err));
+      .catch((err) => toast.error("Erro ao carregar notas"));
   };
 
   const deleteNote = (id) => {
     api
       .delete(`/api/notes/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) alert("Note deleted!");
-        else alert("Failed to delete note.");
+        toast.success("Nota eliminada com sucesso!");
         getNotes();
       })
-      .catch((error) => alert(error));
+      .catch((err) => {
+        toast.error("Erro ao eliminar nota!");
+      });
   };
 
-  const createNote = ({ title, content }) => {
+  const createNote = ({ title, content, fatura_id }) => {
     api
-      .post("/api/notes/", { title, content })
+      .post("/api/notes/", { title, content, fatura_id })
       .then((res) => {
-        if (res.status === 201) alert("Note created!");
-        getNotes();
+        if (res.status === 201) {
+          toast.success("Nota criada com sucesso! ✅");
+          getNotes();
+        }
       })
-      .catch((err) => alert(err));
+      .catch((err) => {
+        toast.error("Erro ao criar nota ❌");
+      });
   };
 
   const fetchFaturas = () => {
@@ -92,7 +137,7 @@ function Fatura() {
         setLoading(false);
       })
       .catch((err) => {
-        alert("Erro ao buscar faturas: " + err);
+        toast.error("Erro ao buscar faturas: " + err);
         setLoading(false);
       });
   };
@@ -104,7 +149,7 @@ function Fatura() {
         setEntidadesDisponiveis(res.data);
       })
       .catch((err) => {
-        alert("Erro ao buscar entidades: " + err);
+        toast.error("Erro ao buscar entidades: " + err);
       });
   };
 
@@ -112,55 +157,95 @@ function Fatura() {
     api
       .delete(`/api/faturas/delete/${id}/`)
       .then(() => {
-        alert("Fatura deletada!");
+        toast.success("Documento eliminado!");
         fetchFaturas();
       })
-      .catch((err) => alert("Erro ao deletar fatura: " + err));
+      .catch((err) => {
+        toast.error("Erro ao eliminar o documento!");
+      });
   };
 
   const selectFatura = (fatura) => {
-    setSelectedFatura(fatura); // Atualiza a fatura selecionada
+    setSelectedFatura(fatura);
     if (fatura.file_url) {
-      setFileUrl(fatura.file_url); // Atualiza o URL do arquivo
+      setFileUrl(fatura.file_url);
     }
-    setFaturaId(fatura.id); // Atualiza o estado de faturaId
+    setFaturaId(fatura.id);
   };
 
-  // Função para aplicar o filtro com base no campo e valor selecionados
-  const filterFaturas = () => {
-    const filtered = faturas.filter((fatura) => {
-      if (!filterField || !filterValue) return true; // Se nenhum filtro estiver aplicado, retorna todas as faturas
-      return fatura[filterField]
-        ? fatura[filterField]
-            .toString()
-            .toLowerCase()
-            .includes(filterValue.toLowerCase())
-        : false;
+  const validateFatura = (data) => {
+    const errors = [];
+
+    if (!data.numero_fatura) errors.push("Número da Fatura é obrigatório");
+    if (!data.entidade) errors.push("Entidade é obrigatória");
+
+    const numericFields = [
+      "iva_6",
+      "iva_23",
+      "total_iva",
+      "total_sem_iva",
+      "total_fatura",
+    ];
+    numericFields.forEach((field) => {
+      if (data[field] && isNaN(parseFloat(data[field]))) {
+        errors.push(`${field} deve ser um número válido`);
+      }
     });
-    setFilteredFaturas(filtered);
+
+    if (data.data && !/^\d{4}-\d{2}-\d{2}$/.test(data.data)) {
+      errors.push("Data deve estar no formato YYYY-MM-DD");
+    }
+
+    return errors;
   };
 
-  const handleEntityChange = (e) => {
-    const { value } = e.target;
-    setEntidade(value); // Update the entity state
-    handleSearch(); // Call the search function when entity changes
+  const updateFatura = (faturaId, selectedFatura) => {
+    api
+      .put(`/api/faturas/update/${faturaId}/`, selectedFatura)
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success("Documento atualizado com sucesso! ✅");
+          fetchFaturas();
+        }
+      })
+      .catch((err) => {
+        console.error("Error details:", err);
+        toast.error("Erro ao atualizar o documento ❌");
+      });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const validationErrors = validateFatura(selectedFatura);
+    if (validationErrors.length > 0) {
+      validationErrors.forEach((error) => {
+        toast.error(error);
+      });
+      return;
+    }
+
+    updateFatura(faturaId, selectedFatura);
   };
 
   const handleTipoChange = (e) => {
     const { value } = e.target;
-    setTipo(value); // Update the entity state
-    handleSearch(); // Call the search function when entity changes
+    setTipo(value);
+    handleSearch();
   };
 
-  const uniqueEntidades = [
-    ...new Set(faturas.map((fatura) => fatura.entidade)),
-  ];
+  const handleClassificacaoChange = (e) => {
+    setClassificacao(e.target.value);
+    handleSearch();
+  };
 
   const uniqueTipo = [...new Set(faturas.map((fatura) => fatura.tipo))];
+  const uniqueClassificacoes = [
+    ...new Set(faturas.map((fatura) => fatura.classificacao).filter(Boolean)),
+  ];
 
   const handleNIFChange = (e) => {
     setNif(e.target.value);
-    filterFaturas(); // Aplica o filtro sempre que um dos campos mudar
   };
 
   const formatDate = (dateString) => {
@@ -168,43 +253,44 @@ function Fatura() {
     return new Date(dateString).toLocaleDateString("pt-PT", options);
   };
 
-  // Função para lidar com a mudança da data de início
   const handleDataInicioChange = (e) => setdataInicio(e.target.value);
-
-  // Função para lidar com a mudança da data de término
   const handleDataTerminoChange = (e) => setdataTermino(e.target.value);
 
   const handleClear = () => {
     setEntidade("");
     setTipo("");
     setNif("");
+    setClassificacao("");
     setdataInicio("");
     setdataTermino("");
-    setFilteredFaturas(faturas); // Restaura as faturas originais
+    setSearchTerm("");
+    setFilteredFaturas(faturas);
   };
 
   const handleSearch = () => {
-    let filtered = [...faturas]; // Cria uma cópia das faturas
+    let filtered = [...faturas];
 
-    // Filtra por entidade, se o valor estiver definido
     if (entidade) {
       filtered = filtered.filter((fatura) => fatura.entidade === entidade);
     }
 
-    // Filtra por tipo, se o valor estiver definido
     if (tipo) {
       filtered = filtered.filter((fatura) => fatura.tipo === tipo);
     }
 
-    // Filtra por NIF, se o valor estiver definido
     if (nif) {
-      filtered = filtered.filter((fatura) => fatura.nif.includes(nif));
+      filtered = filtered.filter((fatura) => fatura.nif?.includes(nif));
     }
 
-    // Filtra por intervalo de datas, se as datas estiverem definidas
+    if (classificacao) {
+      filtered = filtered.filter(
+        (fatura) => fatura.classificacao === classificacao
+      );
+    }
+
     if (dataInicio && dataTermino) {
       filtered = filtered.filter((fatura) => {
-        const faturaData = new Date(fatura.data); // Ajuste para garantir que a data da fatura está em um formato válido
+        const faturaData = new Date(fatura.data);
         const inicio = new Date(dataInicio);
         const termino = new Date(dataTermino);
         return faturaData >= inicio && faturaData <= termino;
@@ -223,557 +309,670 @@ function Fatura() {
       });
     }
 
-    // Atualiza o estado com as faturas filtradas
     setFilteredFaturas(filtered);
   };
 
-  // Filtra as entidades com base no termo de busca
   const filteredEntidades = entidadesDisponiveis.filter((ent) =>
     ent.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleFieldChange = (field) => (e) => {
+    setSelectedFatura((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  };
+
+  const toggleRowSelection = (id) => {
+    if (selectedRows.includes(id)) {
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+    } else {
+      setSelectedRows([...selectedRows, id]);
+    }
+  };
+
+  const toggleDetailsPanel = () => {
+    setIsDetailsPanelVisible(!isDetailsPanelVisible);
+  };
+
   return (
-    <>
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <div className="header">
-        <Header />
-      </div>
-      <div className="formSearchContainer">
-        <form className="formSearch" onSubmit={(e) => e.preventDefault()}>
-          <div className="field-group">
-            <label>ENTIDADE</label>
-            <div className="autocomplete-wrapper" ref={wrapperRef}>
+    <div className="fatura-main-container">
+      <Header />
+      <div className="split-layout">
+        {/* Documents List Panel - 50% width */}
+        <div className="documents-panel">
+          <div className="search-toolbar">
+            <div className="search-input-container">
               <input
                 type="text"
-                placeholder="Pesquisar..."
-                value={searchTerm}
+                placeholder="Filtrar resultados..."
+                className="search-input"
                 onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setIsDropdownOpen(true);
+                  const term = e.target.value.toLowerCase();
+                  setFilteredFaturas(
+                    faturas.filter(
+                      (f) =>
+                        f.entidade?.toLowerCase().includes(term) ||
+                        f.numero_fatura?.toLowerCase().includes(term) ||
+                        f.classificacao?.toLowerCase().includes(term)
+                    )
+                  );
                 }}
-                onFocus={() => setIsDropdownOpen(true)}
               />
-
-              {isDropdownOpen && filteredEntidades.length > 0 && (
-                <div className="autocomplete-dropdown">
-                  {filteredEntidades.map((ent, index) => (
-                    <div
-                      key={index}
-                      className="dropdown-option"
-                      onClick={() => {
-                        setEntidade(ent);
-                        setSearchTerm(ent);
-                        setIsDropdownOpen(false);
-                      }}
-                    >
-                      {ent}
-                    </div>
-                  ))}
-                </div>
-              )}
+              <button className="search-button">
+                <FaSearch />
+              </button>
+              <button
+                className="filter-toggle"
+                onClick={() => setIsFiltersVisible(!isFiltersVisible)}
+              >
+                {isFiltersVisible ? <FaFilter /> : <FaFilter />}
+              </button>
             </div>
           </div>
 
-          {/* Campo de pesquisa por NIF */}
-          <div className="field-group">
-            <label>NIF</label>
-            <input
-              type="text"
-              name="nif"
-              value={nif}
-              onChange={handleNIFChange}
-              placeholder="Digite o NIF"
-            />
-          </div>
+          {isFiltersVisible && (
+            <div className="filter-container">
+              <form
+                className="filter-form"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <div className="filter-grid">
+                  <div className="field-group">
+                    <label>ENTIDADE</label>
+                    <div className="autocomplete-wrapper" ref={wrapperRef}>
+                      <input
+                        type="text"
+                        placeholder="Pesquisar..."
+                        value={searchTerm}
+                        onChange={(e) => {
+                          setSearchTerm(e.target.value);
+                          setIsDropdownOpen(true);
+                        }}
+                        onFocus={() => setIsDropdownOpen(true)}
+                      />
 
-          {/* Campo de pesquisa por Classificação */}
-          <div className="field-group">
-            <label>CLASSIFICAÇÃO</label>
-            <input
-              type="text"
-              name="nif"
-              value={nif}
-              onChange={handleNIFChange}
-              placeholder="Digite a classificação"
-            />
-          </div>
-
-          {/* Campo de pesquisa por Tipo de Documento */}
-          <div className="field-group">
-            <label>DOCUMENTO</label>
-            <select name="tipo" value={tipo} onChange={handleTipoChange}>
-              <option value="">Selecione um tipo de documento</option>
-              {uniqueTipo.map((tipo, index) => (
-                <option key={index} value={tipo}>
-                  {tipo}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filtro por intervalo de datas */}
-          <div className="field-group">
-            <label>INÍCIO</label>
-            <input
-              type="date"
-              name="dataInicio"
-              value={dataInicio}
-              onChange={handleDataInicioChange}
-            />
-          </div>
-
-          <div className="field-group">
-            <label>FIM</label>
-            <input
-              type="date"
-              name="dataTermino"
-              value={dataTermino}
-              onChange={handleDataTerminoChange}
-            />
-          </div>
-
-          <button
-            className="searchButtons"
-            type="submit"
-            onClick={handleSearch}
-          >
-            <span class="span">🔎</span>
-          </button>
-          <button className="searchButtons" type="submit" onClick={handleClear}>
-            <span class="span">🧹</span>
-          </button>
-        </form>
-      </div>
-      <div className="fatura-container">
-        <div className="fatura-layout" style={{ height: "80%" }}>
-          <div className="fatura-sidebar">
-            <h3>Documentos</h3>
-            {loading ? (
-              <div className="loading-spinner"></div>
-            ) : (
-              <div className="fatura-list">
-                {filteredFaturas.map((fatura) => (
-                  <div
-                    key={fatura.id}
-                    className="fatura-item"
-                    onClick={() => selectFatura(fatura)}
-                  >
-                    <div className="fatura-info">
-                      <div className="fatura-header">
-                        <h4 className="fatura-numero">{fatura.entidade}</h4>
-                        <span className="fatura-data">
-                          {formatDate(fatura.data)}
-                        </span>
-                      </div>
-                      <div className="fatura-details">
-                        <span className="fatura-valor">
-                          €{parseFloat(fatura.total_fatura).toFixed(2)}
-                        </span>
-                      </div>
+                      {isDropdownOpen && filteredEntidades.length > 0 && (
+                        <div className="autocomplete-dropdown">
+                          {filteredEntidades.map((ent, index) => (
+                            <div
+                              key={index}
+                              className="dropdown-option"
+                              onClick={() => {
+                                setEntidade(ent);
+                                setSearchTerm(ent);
+                                setIsDropdownOpen(false);
+                              }}
+                            >
+                              {ent}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div
-            className="fatura-pdf-viewer"
-            style={{
-              height: "82vh",
-            }}
-          >
-            {selectedFatura ? (
-              fileUrl && fileUrl.endsWith(".pdf") ? (
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                  <Viewer
-                    fileUrl={fileUrl}
-                    theme={{
-                      theme: "darkblue", // Define o tema escuro
-                    }}
-                    style={{
-                      width: "80%",
-                      maxHeight: "100%",
-                      overflow: "auto",
-                    }}
-                  />
-                </Worker>
-              ) : (
-                <p>Selecione um documento válido.</p>
-              )
-            ) : (
-              <p>Selecione uma fatura para ver o PDF.</p>
-            )}
-          </div>
 
-          {/* Detalhes e edição no lado direito */}
-          <div className="fatura-details-container">
-            {selectedFatura ? (
-              <div>
-                <div className="field-group">
-                  <div>
+                  <div className="field-group">
                     <label>NIF</label>
                     <input
                       type="text"
-                      className="inputText"
-                      value={selectedFatura.nif || ""} // Valor exibido no input
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Copia os outros campos
-                          nif: e.target.value, // Atualiza apenas o campo "nif"
-                        })
-                      } // Atualiza o estado no evento de alteração
-                    />
-                  </div>
-                  <div>
-                    <label>Entidade</label>
-                    <input
-                      type="text"
-                      className="inputText"
-                      value={selectedFatura.entidade || ""} // Mostra o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          entidade: e.target.value, // Atualiza apenas o campo "total_iva"
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-                </div>
-                <div className="field-group">
-                  <div>
-                    <label>País</label>
-                    <input
-                      type="text"
-                      className="inputText"
-                      value={selectedFatura.pais || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          pais: e.target.value, // Atualiza apenas o campo "pais"
-                        })
-                      } // Atualiza o estado ao digitar
+                      name="nif"
+                      value={nif}
+                      onChange={handleNIFChange}
+                      placeholder="Digite o NIF"
                     />
                   </div>
 
-                  <div>
-                    <label>Data</label>
+                  <div className="field-group">
+                    <label>CLASSIFICAÇÃO</label>
+                    <select
+                      name="classificacao"
+                      value={classificacao}
+                      onChange={handleClassificacaoChange}
+                    >
+                      <option value="">Todas as classificações</option>
+                      {uniqueClassificacoes.map((classif, index) => (
+                        <option key={index} value={classif}>
+                          {classif}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="field-group">
+                    <label>DOCUMENTO</label>
+                    <select
+                      name="tipo"
+                      value={tipo}
+                      onChange={handleTipoChange}
+                    >
+                      <option value="">Selecione um tipo de documento</option>
+                      {uniqueTipo.map((tipo, index) => (
+                        <option key={index} value={tipo}>
+                          {tipo}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="field-group">
+                    <label>INÍCIO</label>
                     <input
                       type="date"
-                      className="inputText"
-                      value={selectedFatura.data || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          data: e.target.value, // Atualiza o campo "data"
-                        })
-                      } // Atualiza o estado ao digitar
+                      name="dataInicio"
+                      value={dataInicio}
+                      onChange={handleDataInicioChange}
+                    />
+                  </div>
+
+                  <div className="field-group">
+                    <label>FIM</label>
+                    <input
+                      type="date"
+                      name="dataTermino"
+                      value={dataTermino}
+                      onChange={handleDataTerminoChange}
                     />
                   </div>
                 </div>
 
-                <div className="field-group">
-                  <div>
-                    <label>IVA 6%</label>
-                    <input
-                      type="number"
-                      className="inputText"
-                      value={selectedFatura.iva_6 || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          iva_6: e.target.value, // Atualiza o campo "iva_6"
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-
-                  <div>
-                    <label>IVA 23%</label>
-                    <input
-                      type="number"
-                      className="inputText"
-                      value={selectedFatura.iva_23 || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          iva_23: e.target.value, // Atualiza o campo "iva_23"
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-                </div>
-
-                <div className="field-group">
-                  <div>
-                    <label>Total IVA</label>
-                    <input
-                      type="number"
-                      className="inputText"
-                      value={selectedFatura.total_iva || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          total_iva: e.target.value, // Atualiza o campo "total_iva"
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-
-                  <div>
-                    <label>Total s/IVA</label>
-                    <input
-                      type="number"
-                      className="inputText"
-                      value={
-                        selectedFatura.total_fatura -
-                          selectedFatura.total_iva || 0
-                      } // Calcula a diferença sem arredondar
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          total_fatura:
-                            parseFloat(e.target.value) +
-                            (selectedFatura.total_iva || 0), // Atualiza "total_fatura" com base no valor de "Total s/IVA"
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-                </div>
-                <div className="field-group">
-                  <div>
-                    <label>Valor Final</label>
-                    <input
-                      type="number"
-                      className="inputText"
-                      value={selectedFatura.total_fatura || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          total_fatura: e.target.value, // Atualiza o campo "total_fatura"
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-
-                  <div>
-                    <label>Número da Fatura</label>
-                    <input
-                      type="text"
-                      className="inputText"
-                      value={selectedFatura.numero_fatura || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          numero_fatura: e.target.value, // Atualiza o campo "description" (Número da Fatura)
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-                </div>
-                <div className="field-group">
-                  <div>
-                    <label>Classificação</label>
-                    <select
-                      className="inputText"
-                      value={selectedFatura.classificacao || ""}
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura,
-                          classificacao: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Selecione a Classificação</option>
-                      <option value="72 - Prestação de Serviços">
-                        72 - Prestação de Serviços
-                      </option>
-                      <option value="72.1 - Consultoria Empresarial">
-                        72.1 - Consultoria Empresarial
-                      </option>
-                      <option value="72.2 - Consultoria Fiscal">
-                        72.2 - Consultoria Fiscal
-                      </option>
-                      <option value="72.3 - Desenvolvimento de Software">
-                        72.3 - Desenvolvimento de Software
-                      </option>
-                      <option value="72.4 - Serviços de Marketing">
-                        72.4 - Serviços de Marketing
-                      </option>
-                      <option value="72.5 - Tradução e Interpretação">
-                        72.5 - Tradução e Interpretação
-                      </option>
-                      <option value="73 - Venda de Mercadorias">
-                        73 - Venda de Mercadorias
-                      </option>
-                      <option value="73.1 - Venda de Produtos">
-                        73.1 - Venda de Produtos
-                      </option>
-                      <option value="73.2 - Vendas em Loja">
-                        73.2 - Vendas em Loja
-                      </option>
-                      <option value="74 - Outros Serviços">
-                        74 - Outros Serviços
-                      </option>
-                      <option value="74.1 - Treinamentos">
-                        74.1 - Treinamentos
-                      </option>
-                      <option value="74.2 - Serviços de Eventos">
-                        74.2 - Serviços de Eventos
-                      </option>
-                      <option value="74.3 - Serviços de Transporte">
-                        74.3 - Serviços de Transporte
-                      </option>
-                      <option value="75 - Despesas Operacionais">
-                        75 - Despesas Operacionais
-                      </option>
-                      <option value="75.1 - Aluguel">75.1 - Aluguel</option>
-                      <option value="75.2 - Energia Elétrica">
-                        75.2 - Energia Elétrica
-                      </option>
-                      <option value="75.3 - Água e Esgoto">
-                        75.3 - Água e Esgoto
-                      </option>
-                      <option value="76 - Fornecimentos e Serviços Externos">
-                        76 - Fornecimentos e Serviços Externos
-                      </option>
-                      <option value="76.1 - Trabalhos Especializados">
-                        76.1 - Trabalhos Especializados
-                      </option>
-                      <option value="76.2 - Honorários">
-                        76.2 - Honorários
-                      </option>
-                      <option value="76.3 - Comissões">76.3 - Comissões</option>
-                      <option value="76.4 - Rendas e Aluguéis">
-                        76.4 - Rendas e Aluguéis
-                      </option>
-                      <option value="76.5 - Comunicação">
-                        76.5 - Comunicação
-                      </option>
-                      <option value="76.6 - Seguros">76.6 - Seguros</option>
-                      <option value="76.7 - Royalties">76.7 - Royalties</option>
-                      <option value="77 - Impostos e IVA">
-                        77 - Impostos e IVA
-                      </option>
-                      <option value="77.1 - IVA Suportado">
-                        77.1 - IVA Suportado
-                      </option>
-                      <option value="77.2 - IVA Dedutível">
-                        77.2 - IVA Dedutível
-                      </option>
-                      <option value="77.3 - IVA Liquidado">
-                        77.3 - IVA Liquidado
-                      </option>
-                      <option value="78 - Gastos com o Pessoal">
-                        78 - Gastos com o Pessoal
-                      </option>
-                      <option value="78.1 - Remunerações">
-                        78.1 - Remunerações
-                      </option>
-                      <option value="78.2 - Benefícios Pós-Emprego">
-                        78.2 - Benefícios Pós-Emprego
-                      </option>
-                      <option value="78.3 - Indemnizações">
-                        78.3 - Indemnizações
-                      </option>
-                      <option value="79 - Juros e Encargos Financeiros">
-                        79 - Juros e Encargos Financeiros
-                      </option>
-                      <option value="79.1 - Juros Suportados">
-                        79.1 - Juros Suportados
-                      </option>
-                      <option value="79.2 - Diferenças de Câmbio">
-                        79.2 - Diferenças de Câmbio
-                      </option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label>Tipo</label>
-                    <select
-                      className="inputText"
-                      value={selectedFatura.tipo || ""} // Mostra o tipo associado, ou "" caso não exista
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura,
-                          tipo: e.target.value, // Atualiza o tipo selecionado
-                        })
-                      }
-                    >
-                      {/* As opções disponíveis */}
-                      <option value="Fatura">Fatura</option>
-                      <option value="Fatura Simplificada">
-                        Fatura Simplificada
-                      </option>
-                      <option value="Comprovante de Venda">
-                        Comprovante de Venda
-                      </option>
-                      <option value="Nota de Débito">Nota de Débito</option>
-                      <option value="Nota de Crédito">Nota de Crédito</option>
-                      <option value="Fatura Proforma">Fatura Proforma</option>
-                      <option value="Recibo">Recibo</option>
-                      <option value="Nota Fiscal Eletrônica">
-                        Nota Fiscal Eletrônica
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div className="field-group">
-                  <div>
-                    <label>Descrição</label>
-                    <input
-                      type="text"
-                      className="inputText"
-                      value={selectedFatura.description || ""} // Exibe o valor atual ou vazio
-                      onChange={(e) =>
-                        setSelectedFatura({
-                          ...selectedFatura, // Mantém os outros campos
-                          tipo: e.target.value, // Atualiza o campo "description" (Descrição)
-                        })
-                      } // Atualiza o estado ao digitar
-                    />
-                  </div>
-                </div>
-                <div className="sectionNotas">
-                  <h2 className="notas-title">Notas</h2>
+                <div className="filter-buttons">
                   <button
-                    className="button-33"
-                    onClick={() => setPopupOpen(true)}
+                    className="btn-search"
+                    type="submit"
+                    onClick={handleSearch}
                   >
-                    ➕
+                    Aplicar Filtros
                   </button>
-                  <button type="submit" className="button-33">
-                    💾
+                  <button
+                    className="btn-clear"
+                    type="button"
+                    onClick={handleClear}
+                  >
+                    Limpar
                   </button>
                 </div>
-                <div className="notes-container">
-                  {notes
-                    .filter((note) => {
-                      return note.fatura_id === selectedFatura.id; // Filter based on matching ids
-                    })
-                    .map((note) => (
-                      <Note key={note.id} note={note} onDelete={deleteNote} />
-                    ))}
-                </div>
-                {/* Popup */}
-                <NotePopup
-                  isOpen={isPopupOpen}
-                  closePopup={() => setPopupOpen(false)}
-                  createNote={createNote}
-                />
-                <div className="buttoncontainer"></div>
-              </div>
-            ) : (
-              <p>Selecione uma fatura para editar os detalhes.</p>
-            )}
+              </form>
+            </div>
+          )}
+
+          <div className="faturas-table-container">
+            <table className="faturas-table">
+              <thead>
+                <tr>
+                  <th className="checkbox-column">
+                    <input
+                      type="checkbox"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedRows(filteredFaturas.map((f) => f.id));
+                        } else {
+                          setSelectedRows([]);
+                        }
+                      }}
+                    />
+                  </th>
+                  <th>Data</th>
+                  <th>Fornecedor</th>
+                  <th>Nº Fatura</th>
+                  <th>Valor</th>
+                  <th>Tipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" style={{ textAlign: "center" }}>
+                      <div className="loading-spinner"></div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredFaturas.map((fatura) => (
+                    <tr
+                      key={fatura.id}
+                      className={
+                        selectedFatura?.id === fatura.id ? "selected-row" : ""
+                      }
+                      onClick={() => selectFatura(fatura)}
+                    >
+                      <td className="checkbox-column">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(fatura.id)}
+                          onChange={() => toggleRowSelection(fatura.id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </td>
+                      <td>{formatDate(fatura.data)}</td>
+                      <td>{fatura.entidade}</td>
+                      <td>{fatura.numero_fatura}</td>
+                      <td>
+                        {fatura.total_fatura
+                          ? `${fatura.total_fatura.toLocaleString("pt-PT")} €`
+                          : ""}
+                      </td>
+                      <td>{fatura.tipo}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
+
+        {/* Document Viewer Panel - 50% width */}
+        <div className="document-viewer-panel">
+          <div className="viewer-header">
+            {selectedFatura && (
+              <>
+                <div className="doc-info">
+                  <h3>{selectedFatura.numero_fatura}</h3>
+                  <p>
+                    {selectedFatura.entidade} •{" "}
+                    {formatDate(selectedFatura.data)}
+                  </p>
+                </div>
+                <div className="viewer-actions">
+                  {/* Print button */}
+                  <button
+                    className="print-btn"
+                    onClick={() => window.print()}
+                    title="Imprimir documento"
+                    aria-label="Imprimir documento"
+                  >
+                    <FaPrint />
+                  </button>
+                  <button
+                    className={`toggle-details-btn ${
+                      isDetailsPanelVisible ? "active" : ""
+                    }`}
+                    onClick={toggleDetailsPanel}
+                    title="Ver detalhes"
+                    aria-label="Ver ou esconder detalhes do documento"
+                    aria-expanded={isDetailsPanelVisible}
+                  >
+                    <FaInfo />
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="viewer-container" ref={containerRef}>
+            {selectedFatura ? (
+              fileUrl && fileUrl.endsWith(".pdf") ? (
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                  <div className="pdf-toolbar">
+                    <div className="tool-group">
+                      <button
+                        onClick={() => handleZoom(Math.max(0.5, scale - 0.1))}
+                        className="tool-button"
+                        title="Diminuir zoom"
+                        aria-label="Diminuir zoom"
+                      >
+                        <FaSearchMinus />
+                      </button>
+
+                      <div className="zoom-display">
+                        <span>{Math.round(scale * 100)}%</span>
+                      </div>
+
+                      <button
+                        onClick={() => handleZoom(Math.min(3, scale + 0.1))}
+                        className="tool-button"
+                        title="Aumentar zoom"
+                        aria-label="Aumentar zoom"
+                      >
+                        <FaSearchPlus />
+                      </button>
+
+                      <button
+                        onClick={() => handleZoom(1)}
+                        className="tool-button"
+                        title="Redefinir zoom"
+                        aria-label="Redefinir zoom para 100%"
+                      >
+                        <FaUndo />
+                      </button>
+                    </div>
+
+                    <div className="tool-group">
+                      <button
+                        onClick={toggleFullscreen}
+                        className="tool-button"
+                        title={
+                          isFullscreen ? "Sair de tela cheia" : "Tela cheia"
+                        }
+                        aria-label={
+                          isFullscreen ? "Sair de tela cheia" : "Tela cheia"
+                        }
+                      >
+                        {isFullscreen ? <FaCompress /> : <FaExpand />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Viewer container */}
+                  <div key={viewerKey} className="pdf-container">
+                    <Viewer
+                      fileUrl={fileUrl}
+                      theme={{
+                        theme: "darkblue",
+                      }}
+                      defaultScale={scale}
+                      onDocumentLoad={() => {
+                        // Reset scroll position when scale changes
+                        if (containerRef.current) {
+                          const container =
+                            containerRef.current.querySelector(
+                              ".rpv-core__viewer"
+                            );
+                          if (container) {
+                            container.scrollLeft = 0;
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                </Worker>
+              ) : (
+                <div className="no-preview" role="alert">
+                  <FaFileInvoice size={48} />
+                  <p>Selecione um documento válido.</p>
+                </div>
+              )
+            ) : (
+              <div className="no-preview" role="alert">
+                <FaFileInvoice size={48} />
+                <p>Selecione uma fatura para ver o documento.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Sliding Details Panel */}
+          {selectedFatura && (
+            <div
+              className={`document-details-sidebar ${
+                isDetailsPanelVisible ? "visible" : ""
+              }`}
+              role="complementary"
+              aria-label="Detalhes do documento"
+              tabIndex={isDetailsPanelVisible ? 0 : -1}
+            >
+              <div className="sidebar-header">
+                <h3 id="details-panel-title">Detalhes do Documento</h3>
+                <button
+                  className="close-sidebar"
+                  onClick={toggleDetailsPanel}
+                  aria-label="Fechar painel de detalhes"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+
+              <div className="sidebar-tabs" role="tablist">
+                <button
+                  className="tab-btn active"
+                  role="tab"
+                  aria-selected="true"
+                  id="tab-info"
+                  aria-controls="panel-info"
+                >
+                  Informação
+                </button>
+                <button
+                  className="tab-btn"
+                  role="tab"
+                  aria-selected="false"
+                  id="tab-notes"
+                  aria-controls="panel-notes"
+                >
+                  Notas
+                </button>
+              </div>
+
+              <div className="sidebar-content">
+                <div
+                  className="invoice-form"
+                  role="tabpanel"
+                  id="panel-info"
+                  aria-labelledby="tab-info"
+                >
+                  <div className="form-section">
+                    <h4>Dados Gerais</h4>
+                    <div className="form-group">
+                      <label htmlFor="nif-input">NIF</label>
+                      <input
+                        id="nif-input"
+                        type="text"
+                        value={selectedFatura.nif || ""}
+                        onChange={handleFieldChange("nif")}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="entidade-input">Entidade</label>
+                      <input
+                        id="entidade-input"
+                        type="text"
+                        value={selectedFatura.entidade || ""}
+                        onChange={handleFieldChange("entidade")}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="pais-input">País</label>
+                      <input
+                        id="pais-input"
+                        type="text"
+                        value={selectedFatura.pais || ""}
+                        onChange={handleFieldChange("pais")}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="data-input">Data</label>
+                      <input
+                        id="data-input"
+                        type="date"
+                        value={selectedFatura.data || ""}
+                        onChange={handleFieldChange("data")}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="numero-fatura-input">
+                        Número da Fatura
+                      </label>
+                      <input
+                        id="numero-fatura-input"
+                        type="text"
+                        value={selectedFatura.numero_fatura || ""}
+                        onChange={handleFieldChange("numero_fatura")}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-section">
+                    <h4>Valores</h4>
+                    <div className="form-group">
+                      <label htmlFor="iva6-input">IVA 6%</label>
+                      <input
+                        id="iva6-input"
+                        type="number"
+                        value={selectedFatura.iva_6 || ""}
+                        onChange={handleFieldChange("iva_6")}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="iva23-input">IVA 23%</label>
+                      <input
+                        id="iva23-input"
+                        type="number"
+                        value={selectedFatura.iva_23 || ""}
+                        onChange={handleFieldChange("iva_23")}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="total-iva-input">Total IVA</label>
+                      <input
+                        id="total-iva-input"
+                        type="number"
+                        value={selectedFatura.total_iva || ""}
+                        onChange={handleFieldChange("total_iva")}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="total-sem-iva-input">Total s/IVA</label>
+                      <input
+                        id="total-sem-iva-input"
+                        type="number"
+                        value={
+                          selectedFatura.total_fatura -
+                          (selectedFatura.total_iva || 0)
+                        }
+                        onChange={(e) => {
+                          const totalFatura =
+                            parseFloat(e.target.value) +
+                            (selectedFatura.total_iva || 0);
+                          setSelectedFatura({
+                            ...selectedFatura,
+                            total_fatura: totalFatura,
+                          });
+                        }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="valor-final-input">Valor Final</label>
+                      <input
+                        id="valor-final-input"
+                        type="number"
+                        value={selectedFatura.total_fatura || ""}
+                        onChange={handleFieldChange("total_fatura")}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-section">
+                    <h4>Classificação</h4>
+                    <div className="form-group">
+                      <label htmlFor="classificacao-select">
+                        Classificação
+                      </label>
+                      <select
+                        id="classificacao-select"
+                        value={selectedFatura.classificacao || ""}
+                        onChange={handleFieldChange("classificacao")}
+                      >
+                        <option value="">Selecione a Classificação</option>
+                        <option value="72 - Prestação de Serviços">
+                          72 - Prestação de Serviços
+                        </option>
+                        <option value="72.1 - Consultoria Empresarial">
+                          72.1 - Consultoria Empresarial
+                        </option>
+                        <option value="72.2 - Consultoria Fiscal">
+                          72.2 - Consultoria Fiscal
+                        </option>
+                        <option value="75 - Despesas Operacionais">
+                          75 - Despesas Operacionais
+                        </option>
+                        <option value="76 - Fornecimentos e Serviços Externos">
+                          76 - Fornecimentos e Serviços Externos
+                        </option>
+                        <option value="77 - Impostos e IVA">
+                          77 - Impostos e IVA
+                        </option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="tipo-select">Tipo</label>
+                      <select
+                        id="tipo-select"
+                        value={selectedFatura.tipo || ""}
+                        onChange={handleFieldChange("tipo")}
+                      >
+                        <option value="Fatura">Fatura</option>
+                        <option value="Fatura Simplificada">
+                          Fatura Simplificada
+                        </option>
+                        <option value="Comprovante de Venda">
+                          Comprovante de Venda
+                        </option>
+                        <option value="Nota de Débito">Nota de Débito</option>
+                        <option value="Nota de Crédito">Nota de Crédito</option>
+                        <option value="Recibo">Recibo</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="descricao-textarea">Descrição</label>
+                      <textarea
+                        id="descricao-textarea"
+                        value={selectedFatura.description || ""}
+                        onChange={handleFieldChange("description")}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-actions">
+                    <button
+                      type="button"
+                      className="btn-save"
+                      onClick={handleSubmit}
+                      aria-label="Guardar alterações"
+                    >
+                      <FaSave />
+                      <span>Guardar</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-delete"
+                      onClick={() => deleteFatura(selectedFatura.id)}
+                      aria-label="Eliminar fatura"
+                    >
+                      <FaTrashAlt />
+                      <span>Eliminar</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  className="notes-section"
+                  style={{ display: "none" }}
+                  role="tabpanel"
+                  id="panel-notes"
+                  aria-labelledby="tab-notes"
+                >
+                  <div className="notes-header">
+                    <h4>Notas</h4>
+                    <button
+                      className="btn-add-note"
+                      onClick={() => setPopupOpen(true)}
+                      aria-label="Adicionar nova nota"
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+
+                  <div className="notes-list">
+                    {notes
+                      .filter((note) => note.fatura_id === selectedFatura.id)
+                      .map((note) => (
+                        <Note key={note.id} note={note} onDelete={deleteNote} />
+                      ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isPopupOpen && selectedFatura && (
+            <NotePopup
+              isOpen={isPopupOpen}
+              closePopup={() => setPopupOpen(false)}
+              createNote={createNote}
+              fatura_id={selectedFatura.id}
+            />
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

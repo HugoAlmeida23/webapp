@@ -86,12 +86,13 @@ function InserirFatura() {
 
   return (
     <>
-      <Header />
+      <Header className="header"/>
       <div className="invoice-form-container">
         <h2>Inserir Documentos</h2>
         <form onSubmit={handleUpload}>
           <label>Arquivos (PDF)</label>
           <input 
+            className="input-field"
             type="file" 
             accept="application/pdf" 
             onChange={handleFileChange} 
