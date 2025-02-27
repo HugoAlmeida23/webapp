@@ -124,22 +124,20 @@ ul {
 }
 
 .item-name {
-  transition: opacity 0.3s, visibility 0.3s;
-  font-size: 15px;
+  transition: opacity 0.5s ease-in-out, max-width 0.5s ease-in-out, visibility 0.5s;
+  font-size: 13px;
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
+  max-width: 150px; /* Adjust based on your layout */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .collapsed .item-name {
   opacity: 0;
   visibility: hidden;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  display: none; /* Completely hide the element */
-  transition-delay: 0.1s;
+  max-width: 0;
+  transition-delay: 0s;
 }
 
 .tooltip {

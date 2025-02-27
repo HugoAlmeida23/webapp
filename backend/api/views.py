@@ -117,44 +117,46 @@ class FaturaListCreate(generics.ListCreateAPIView):
             
             # Verifique se ocr_data é uma lista e possui dados
             # Verifique se ocr_data é um dicionário e possui dados
-            if isinstance(ocr_data, dict) and ocr_data:
-                formatted_data = ocr_data
-                print("formatted_data content:")
-                print(formatted_data)
-
-                # Acesse os dados com segurança, usando get() para evitar erros caso a chave não exista
-                # Convert values safely, ensuring they are strings or numbers
-                iva_6 = None if formatted_data.get('IVA6') in ['null', None, ''] else formatted_data.get('IVA6')
-                iva_23 = None if formatted_data.get('IVA23') in ['null', None, ''] else formatted_data.get('IVA23')
-                total_iva = None if formatted_data.get('TotalIVA') in ['null', None, ''] else formatted_data.get('TotalIVA')
-                total_fatura = None if formatted_data.get('TotalFatura') in ['null', None, ''] else formatted_data.get('TotalFatura')
-
-                totalFatura = float(formatted_data.get('TotalFatura', '0.00').replace(',', '.')) if formatted_data.get('TotalFatura') else 0.00
-                totalIVA = float(formatted_data.get('TotalIVA', '0.00').replace(',', '.')) if formatted_data.get('TotalIVA') else 0.00
-                totalSemIVA = totalFatura - totalIVA
-
-                # Cria a fatura com os dados extraídos
-                serializer.save(
-                    user=self.request.user,
-                    description=formatted_data.get('Descricao', 'Descrição não encontrada'),
-                    nif=formatted_data.get('NIF', 'NIF não encontrado'),
-                    entidade=formatted_data.get('Entidade', 'Desconhecido'),
-                    pais=formatted_data.get('Pais', 'Pais não encontrado'),
-                    data=formatted_data.get('DataFatura', '2024-01-01'),
-                    numero_fatura=formatted_data.get('NumeroFatura', 'Número não encontrado'),
-                    iva_6=iva_6,
-                    iva_23=iva_23,
-                    total_iva=total_iva,
-                    total_sem_iva=totalSemIVA,
-                    total_fatura=total_fatura,
-                    tipo_entidade=formatted_data.get('TipoEntidade', 'Desconhecido'),
-                    classificacao=formatted_data.get('Classificacao', 'Desconhecido'),
-                    tipo=formatted_data.get('TipoDocumento', 'Desconhecido'),
-                    file_url=file_url  # Salva o link do Supabase
-                )
-                print("Fatura criada com os dados:", serializer.data)
+            if isinstance(ocr_data, list) and ocr_data:  # Verifica se é uma lista e se não está vazia
+                formatted_data = ocr_data[0]  # Pega o primeiro item da lista
+            elif isinstance(ocr_data, dict) and ocr_data:
+                formatted_data = ocr_data  # Se for um dicionário, usa diretamente
             else:
                 raise ValueError("O formato dos dados do OCR está incorreto ou está vazio.")
+
+            print("formatted_data content:", formatted_data)
+
+            # Converte valores de forma segura
+            iva_6 = None if formatted_data.get('IVA6') in ['null', None, ''] else formatted_data.get('IVA6')
+            iva_23 = None if formatted_data.get('IVA23') in ['null', None, ''] else formatted_data.get('IVA23')
+            total_iva = None if formatted_data.get('TotalIVA') in ['null', None, ''] else formatted_data.get('TotalIVA')
+            total_fatura = None if formatted_data.get('TotalFatura') in ['null', None, ''] else formatted_data.get('TotalFatura')
+
+            totalFatura = float(formatted_data.get('TotalFatura', '0.00').replace(',', '.')) if formatted_data.get('TotalFatura') else 0.00
+            totalIVA = float(formatted_data.get('TotalIVA', '0.00').replace(',', '.')) if formatted_data.get('TotalIVA') else 0.00
+            totalSemIVA = totalFatura - totalIVA
+
+            # Cria a fatura com os dados extraídos
+            serializer.save(
+                user=self.request.user,
+                description=formatted_data.get('Descricao', 'Descrição não encontrada'),
+                nif=formatted_data.get('NIF', 'NIF não encontrado'),
+                entidade=formatted_data.get('Entidade', 'Desconhecido'),
+                pais=formatted_data.get('Pais', 'Pais não encontrado'),
+                data=formatted_data.get('DataFatura', '2024-01-01'),
+                numero_fatura=formatted_data.get('NumeroFatura', 'Número não encontrado'),
+                iva_6=iva_6,
+                iva_23=iva_23,
+                total_iva=total_iva,
+                total_sem_iva=totalSemIVA,
+                total_fatura=total_fatura,
+                tipo_entidade=formatted_data.get('TipoEntidade', 'Desconhecido'),
+                classificacao=formatted_data.get('Classificacao', 'Desconhecido'),
+                tipo=formatted_data.get('TipoDocumento', 'Desconhecido'),
+                file_url=file_url  # Salva o link do Supabase
+            )
+            print("Fatura criada com os dados:", serializer.data)
+
 
         else:
             raise ValueError("Arquivo de fatura não enviado.")

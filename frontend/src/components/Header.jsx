@@ -23,48 +23,37 @@ function Header() {
 
   return (
     <div className={collapsed ? "collapsed" : ""}>
-      <aside
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-
-        
-        <a href="/" className="logo-wrapper">
-          <img
-            src={simpleLogo}
-            alt="UI Kit Logo"
-            style={{ width: "24px", height: "24px" }}
-          />
-          <span className="brand-name">TrofTech</span>
+      <aside onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <button class="menu-btn fa fa-chevron-left"></button>
+        <a href="/" class="logo-wrapper">
+          <span class="fa-brands fa-uikit"></span>
+          <span class="brand-name">Troftech</span>
         </a>
-        
-        <div className="separator"></div>
-        
-        <ul className="menu-items">
+        <div class="separator"></div>
+        <ul class="menu-items">
           <li>
             <a href="./">
-              <span className="icon fas fa-tachometer-alt"></span>
-              <span className="item-name">Dashboard</span>
+              <span class="icon fa fa-house"></span>
+              <span class="item-name">Home</span>
             </a>
-            <div className="tooltip">Dashboard</div>
+            <span class="tooltip">Home</span>
           </li>
           <li>
             <a href="./faturas">
-              <span className="icon fas fa-file-invoice"></span>
-              <span className="item-name">Gestor de Documentos</span>
+              <span class="icon fa fa-chart-line"></span>
+              <span class="item-name">Gestor de Documentos</span>
             </a>
-            <div className="tooltip">Gestor de Documentos</div>
+            <span class="tooltip">Gestor de Documentos</span>
           </li>
           <li>
             <a href="./inserirFatura">
-              <span className="icon fas fa-file-upload"></span>
-              <span className="item-name">Inserir Documentos</span>
+              <span class="icon fa fa-chart-simple"></span>
+              <span class="item-name">Inserir Documentos</span>
             </a>
-            <div className="tooltip">Inserir Documentos</div>
+            <span class="tooltip">Inserir Documentos</span>
           </li>
         </ul>
       </aside>
-    
     </div>
   );
 }

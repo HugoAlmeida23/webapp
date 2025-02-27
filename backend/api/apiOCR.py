@@ -1,41 +1,50 @@
 import os
 import tempfile
-from pdf2image import convert_from_path
-import requests
-import google.generativeai as genai
 import json
+import cv2
+import pytesseract
+from pdf2image import convert_from_path
+import google.generativeai as genai
 
 # Configure Gemini API
 genai.configure(api_key="AIzaSyBsvIslK8PDHHMNLs8eFENFjUDtOMlXpeQ")
 model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
-base_dir = os.path.dirname(
-    os.path.abspath(__file__)
-)  # Get the current directory (backend/api)
-poppler_path = os.path.join(
-    base_dir, "..", "poppler-24.08.0", "library", "bin"
-)  # Navigate up to backend/ and then into poppler/bin
+# Get base directory and set up paths
+base_dir = os.path.dirname(os.path.abspath(__file__))
+poppler_path = os.path.join(base_dir, "..", "poppler-24.08.0", "library", "bin")
 
+# Set Tesseract path if needed (comment out if Tesseract is in PATH)
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Linux/Mac
 
-def ocr_space_file(filename, overlay=False, api_key="K89182725288957", language="eng"):
-    payload = {
-        "isOverlayRequired": overlay,
-        "apikey": api_key,
-        "language": language,
-    }
-    with open(filename, "rb") as f:
-        r = requests.post(
-            "https://api.ocr.space/parse/image",
-            files={filename: f},
-            data=payload,
-        )
-    return r.content.decode()
-
+def perform_ocr(image_path, language='por+eng'):
+    """Use Tesseract OCR to extract text from image"""
+    try:
+        # Read the image using OpenCV
+        img = cv2.imread(image_path)
+        
+        # Preprocess image for better OCR results
+        # Convert to grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        
+        # Apply thresholding to handle variations in lighting
+        _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # Apply noise reduction
+        denoised = cv2.fastNlMeansDenoising(thresh, None, 10, 7, 21)
+        
+        # Perform OCR with Tesseract
+        custom_config = f'--oem 3 --psm 6 -l {language}'
+        text = pytesseract.image_to_string(denoised, config=custom_config)
+        
+        return text
+    except Exception as e:
+        print(f"OCR error: {str(e)}")
+        return ""
 
 def process_with_gemini(ocr_text):
-    """Envia o resultado do OCR para a API Gemini para processamento e retorna um JSON formatado com os campos necessários."""
-
-    # Melhorando o prompt para incluir a análise da classificação
+    """Process OCR text with Gemini AI to extract structured information"""
     prompt = f"""
     Extraia as seguintes informações de um documento. O texto conterá os dados que você deve identificar e mapear para cada chave.  
 
@@ -107,22 +116,26 @@ def process_with_gemini(ocr_text):
     - `"Recibo"`  
     - `"Nota Fiscal Eletrônica"`  
 
-    **Exemplo do Formato JSON esperado:**
+    Analise cuidadosamente todos os aspectos do documento e não apenas os valores óbvios.
+    Procure por padrões como "Contribuinte n°" ou "NIF" para identificar números fiscais.
+    Examine o formato e conteúdo para determinar o tipo de documento.
+
+    **Formato JSON esperado:**
     {{
-        "A": "500123456",        # NIF da empresa
-        "B": "200654321",        # Número de contribuinte
-        "C": "PT",               # País
-        "F": "2023-12-31",       # Data da fatura
-        "G": "INV123456",        # Número da fatura
-        "I4": "12.34",           # IVA 6%
-        "I8": "45.67",           # IVA 23%
-        "N": "58.01",            # Total IVA
-        "O": "200.00",           # Total da fatura
-        "E": "Empresa XYZ",      # Entidade
-        "ET": "Empresa",         # Tipo de entidade
-        "CL": "", # Classificação
-        "TD": "Fatura"           # Tipo de documento
-        "DESC" : "Recibo de pagamento à empresa MultiCoffee" #Descrição do documento
+        "A": "500123456",
+        "B": "200654321",
+        "C": "PT",
+        "F": "2023-12-31",
+        "G": "INV123456",
+        "I4": "12.34",
+        "I8": "45.67",
+        "N": "58.01",
+        "O": "200.00",
+        "E": "Empresa XYZ",
+        "ET": "Empresa",
+        "CL": "76.1 - Trabalhos Especializados",
+        "TD": "Fatura",
+        "DESC": "Recibo de pagamento à empresa MultiCoffee"
     }}
     
     Se algum campo não for encontrado no texto, retorne `null`.  
@@ -133,22 +146,27 @@ def process_with_gemini(ocr_text):
     {ocr_text}
     """
 
-    print("Texto enviado para análise:", ocr_text)
-
     try:
-        # Chamando o modelo Gemini para processar o prompt
+        # Call Gemini model to process the prompt
         response = model.generate_content(prompt)
-        print("Resposta da API:", response.text)
-        return response.text
+        response_text = response.text.strip()
+        
+        # Clean up response if it contains markdown code blocks
+        if response_text.startswith("```json"):
+            response_text = response_text[7:].strip()
+        if response_text.endswith("```"):
+            response_text = response_text[:-3].strip()
+        
+        # Parse JSON response
+        parsed_response = json.loads(response_text)
+        return parsed_response
     except Exception as e:
-        print(f"Erro ao processar o texto com Gemini: {str(e)}")
-        return {"error": "Erro ao processar o texto."}
+        print(f"Error processing text with Gemini: {str(e)}")
+        return {"error": f"Failed to process text: {str(e)}"}
 
-
-def format_qr_data_for_json(data):
-    """Format the QR data extracted from the Gemini API response."""
-    # Ajustando para tratar um dicionário único em vez de uma lista
-    adjusted_data = {
+def format_document_data(data):
+    """Format the extracted data into the desired structure"""
+    formatted_data = {
         "NIFEmpresa": data.get("A"),
         "NIF": data.get("B"),
         "Pais": data.get("C"),
@@ -164,52 +182,67 @@ def format_qr_data_for_json(data):
         "TipoDocumento": data.get("TD"),
         "Descricao": data.get("DESC"),
     }
-    return adjusted_data
+    return formatted_data
 
-
-# Main function
-def AIProcess(pdf_path):
-    # Check if pdf_path is a BytesIO object (for file-like object)
-    if isinstance(pdf_path, bytes):
-        # Create a temporary file to store the PDF content
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-            temp_file.write(pdf_path)
-            temp_pdf_path = temp_file.name
-
-        # Now pass the temp file path to convert_from_path
-        images = convert_from_path(temp_pdf_path, poppler_path=poppler_path)
-
-        # Clean up the temporary file after conversion
-        os.remove(temp_pdf_path)
-    else:
-        # If pdf_path is a file path, just process it normally
+def AIProcess(pdf_input):
+    """Main processing function that handles PDFs and extracts information"""
+    try:
+        # Handle different input types (file path or bytes)
+        if isinstance(pdf_input, bytes):
+            # Create a temporary file for bytes input
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+                temp_file.write(pdf_input)
+                pdf_path = temp_file.name
+            cleanup_temp = True
+        else:
+            # Use the provided file path
+            pdf_path = pdf_input
+            cleanup_temp = False
+        
+        # Convert PDF to images
         images = convert_from_path(pdf_path, poppler_path=poppler_path)
+        
+        results = []
+        
+        # Process each page of the PDF
+        for i, image in enumerate(images):
+            image_path = f"page_{i + 1}.png"
+            try:
+                # Save the image temporarily
+                image.save(image_path, "PNG")
+                
+                # Perform OCR on the image
+                ocr_text = perform_ocr(image_path)
+                if not ocr_text.strip():
+                    print(f"Warning: No text extracted from page {i+1}")
+                    continue
+                
+                # Process the OCR text with Gemini AI
+                gemini_response = process_with_gemini(ocr_text)
+                
+                # Format the extracted data
+                formatted_data = format_document_data(gemini_response)
+                
+                results.append(formatted_data)
+            finally:
+                # Clean up temporary image file
+                if os.path.exists(image_path):
+                    os.remove(image_path)
+        
+        # Clean up temporary PDF file if it was created
+        if cleanup_temp and os.path.exists(pdf_path):
+            os.remove(pdf_path)
+        
+        # Return all results or just the first one if there's only one page
+        return results[0] if len(results) == 1 else results
+    
+    except Exception as e:
+        print(f"Error in AIProcess: {str(e)}")
+        return {"error": f"Failed to process document: {str(e)}"}
 
-    for i, image in enumerate(images):
-        image_path = f"page_{i + 1}.png"
-        try:
-            image.save(image_path, "PNG")
 
-            # Perform OCR on the image and process it with Gemini
-            ocr_result = ocr_space_file(filename=image_path, api_key="K89182725288957")
-            gemini_response = process_with_gemini(ocr_result)
-            gemini_response = (
-                gemini_response.strip()
-            )  # First, strip any extra spaces from the ends
-            if gemini_response.startswith("```json"):
-                gemini_response = gemini_response[
-                    7:
-                ].strip()  # Remove the starting ```json and leading spaces
-            if gemini_response.endswith("```"):
-                gemini_response = gemini_response[
-                    :-3
-                ].strip()  # Remove the trailing ```
-            gemini_response = json.loads(gemini_response)
-            print(gemini_response)
-            adjusted_qr_data = format_qr_data_for_json(gemini_response)  # Ajuste aqui
-            print(adjusted_qr_data)
-            return adjusted_qr_data
-
-        finally:
-            if os.path.exists(image_path):
-                os.remove(image_path)  # Ensure cleanup
+# Example usage:
+if __name__ == "__main__":
+    # Example: process a PDF file
+    result = AIProcess("path/to/your/document.pdf")
+    print(json.dumps(result, indent=2))
