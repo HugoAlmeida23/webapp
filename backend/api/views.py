@@ -13,11 +13,12 @@ from supabase import create_client, Client
 from django.conf import settings
 import boto3
 from botocore.exceptions import NoCredentialsError
+import os
 
 # Initialize Supabase client (not used for file upload directly but may be used for DB interaction)
 supabase: Client = create_client(
-    settings.SUPABASE_URL,
-    settings.SUPABASE_ACCESS_KEY  # Only two arguments needed for the Supabase client
+    os.getenv('SUPABASE_URL'),
+    os.getenv('SUPABASE_ACCESS_KEY')  # Only two arguments needed for the Supabase client
 )
 
 def upload_to_supabase(file_path, file):
@@ -25,21 +26,21 @@ def upload_to_supabase(file_path, file):
         # Initialize boto3 S3 client for Supabase storage
         s3 = boto3.client(
             's3',
-            aws_access_key_id=settings.AWS_ACCESS_KEY,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS,
-            endpoint_url=settings.ENDPOINT_URL  # Ensure this matches Supabase's S3 endpoint
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS'),
+            endpoint_url=os.getenv('ENDPOINT_URL')  # Ensure this matches Supabase's S3 endpoint
         )
 
         # Upload the file to the Supabase bucket
         s3.upload_fileobj(
             file,
-            settings.SUPABASE_BUCKET,  # Your Supabase bucket name
+            os.getenv('SUPABASE_BUCKET'),  # Your Supabase bucket name
             file_path,
             ExtraArgs={'ContentType': file.content_type}
         )
 
         # Return the URL of the uploaded file
-        file_url = f"{settings.SUPABASE_URL}/storage/v1/object/public/{settings.SUPABASE_BUCKET}/{file_path}"
+        file_url = f"{os.getenv('SUPABASE_URL')}/storage/v1/object/public/{os.getenv('SUPABASE_BUCKET')}/{file_path}"
         print(f"Upload successful! File URL: {file_url}")
         return file_url
 

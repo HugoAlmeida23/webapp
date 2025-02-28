@@ -7,7 +7,7 @@ from pdf2image import convert_from_path
 import google.generativeai as genai
 
 # Configure Gemini API
-genai.configure(api_key="AIzaSyBsvIslK8PDHHMNLs8eFENFjUDtOMlXpeQ")
+genai.configure(api_key=os.getenv('GEMINI_KEY'))
 model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
 # Get base directory and set up paths

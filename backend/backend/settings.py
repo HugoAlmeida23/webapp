@@ -15,6 +15,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 import os
 
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -99,11 +100,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'db.jfsbgwchfufoapdlmkiv.supabase.co',
+        'HOST': os.getenv('HOST'),
         'PORT': '5432',
         'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'datapostgressql',  # Altere conforme necessário
+        'USER': os.getenv('USER'),
+        'PASSWORD': os.getenv('PASSWORD'),
     }
 }
 
@@ -152,17 +153,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
 APPEND_SLASH = False
 
-# Configuração de mídia
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'  # Pasta onde os arquivos serão armazenados
 
-# AWS/Supabase settings
-AWS_ACCESS_KEY = 'c9a0098b6b9d05ad41fe0674e57cbef8'
-AWS_SECRET_ACCESS = 'e745ef8ac6b9041e0fde882cbd36b91dae9023c3384293a7b1547697a533d17a'
-ENDPOINT_URL = 'https://jfsbgwchfufoapdlmkiv.supabase.co/storage/v1/s3'
 
-SUPABASE_URL = "https://jfsbgwchfufoapdlmkiv.supabase.co"
-SUPABASE_ACCESS_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impmc2Jnd2NoZnVmb2FwZGxta2l2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNTg2MTkzMiwiZXhwIjoyMDUxNDM3OTMyfQ.X_7sUDE8tTdBhGgQtEqxQ0HF3xEizaTkv65YjHHUUew"  # Access Key
-SUPABASE_SECRET_KEY = "69d0473956f5fb75034d37897e8d02a4f6261c9cb475ebea2665921acf8a242e"  # Secret Key
-SUPABASE_BUCKET = "documentos"  # Nome do bucket
-GEMINI_KEY = "AIzaSyBsvIslK8PDHHMNLs8eFENFjUDtOMlXpeQ"
