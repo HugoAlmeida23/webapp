@@ -85,7 +85,7 @@ function InserirFatura() {
   };
 
   return (
-    <>
+    <div className="fatura-main-container">
       <Header className="header"/>
       <div className="invoice-form-container">
         <h2>Inserir Documentos</h2>
@@ -158,7 +158,7 @@ function InserirFatura() {
           </div>
         )}
       </div>
-    </>
+      </div>
   );
 }
 

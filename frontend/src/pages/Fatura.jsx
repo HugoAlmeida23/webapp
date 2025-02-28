@@ -109,13 +109,16 @@ function Fatura() {
   };
 
   const deleteNote = (id) => {
+    toast.loading("A eliminar nota...");
     api
       .delete(`/api/notes/delete/${id}/`)
-      .then((res) => {
+      .then(() => {
+        toast.dismiss();
         toast.success("Nota eliminada com sucesso!");
         getNotes();
       })
       .catch((err) => {
+        toast.dismiss();
         toast.error("Erro ao eliminar nota!");
       });
   };
@@ -161,13 +164,16 @@ function Fatura() {
   };
 
   const deleteFatura = (id) => {
+    toast.loading("A eliminar documento...");
     api
       .delete(`/api/faturas/delete/${id}/`)
       .then(() => {
+        toast.dismiss();
         toast.success("Documento eliminado!");
         fetchFaturas();
       })
       .catch((err) => {
+        toast.dismiss();
         toast.error("Erro ao eliminar o documento!");
       });
   };
@@ -179,6 +185,10 @@ function Fatura() {
     }
     setFaturaId(fatura.id);
   };
+
+  const faturaDeleted = () => {
+    setFileUrl("");
+  }
 
   const validateFatura = (data) => {
     const errors = [];
@@ -424,15 +434,20 @@ function Fatura() {
 
                   <div className="field-group">
                     <label>NIF</label>
-                    <input
-                      type="text"
+                    <select
                       name="nif"
                       value={nif}
                       onChange={handleNIFChange}
-                      placeholder="Digite o NIF"
-                    />
+                    >
+                      <option value="">Todos os NIFs</option>
+                      {[...new Set(faturas.map(fatura => fatura.nif).filter(Boolean))].map((nif, index) => (
+                        <option key={index} value={nif}>
+                          {nif}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-
+                  
                   <div className="field-group">
                     <label>CLASSIFICAÇÃO</label>
                     <select
@@ -441,11 +456,133 @@ function Fatura() {
                       onChange={handleClassificacaoChange}
                     >
                       <option value="">Todas as classificações</option>
-                      {uniqueClassificacoes.map((classif, index) => (
-                        <option key={index} value={classif}>
-                          {classif}
-                        </option>
-                      ))}
+                      <optgroup label="Prestação de Serviços">
+                          <option value="72 - Prestação de Serviços">
+                            72 - Prestação de Serviços
+                          </option>
+                          <option value="72.1 - Consultoria Empresarial">
+                            72.1 - Consultoria Empresarial
+                          </option>
+                          <option value="72.2 - Consultoria Fiscal">
+                            72.2 - Consultoria Fiscal
+                          </option>
+                          <option value="72.3 - Desenvolvimento de Software">
+                            72.3 - Desenvolvimento de Software
+                          </option>
+                          <option value="72.4 - Serviços de Marketing">
+                            72.4 - Serviços de Marketing
+                          </option>
+                          <option value="72.5 - Tradução e Interpretação">
+                            72.5 - Tradução e Interpretação
+                          </option>
+                        </optgroup>
+
+                        <optgroup label="Venda de Mercadorias">
+                          <option value="73 - Venda de Mercadorias">
+                            73 - Venda de Mercadorias
+                          </option>
+                          <option value="73.1 - Venda de Produtos">
+                            73.1 - Venda de Produtos
+                          </option>
+                          <option value="73.2 - Vendas em Loja">
+                            73.2 - Vendas em Loja
+                          </option>
+                        </optgroup>
+
+                        <optgroup label="Outros Serviços">
+                          <option value="74 - Outros Serviços">
+                            74 - Outros Serviços
+                          </option>
+                          <option value="74.1 - Treinamentos">
+                            74.1 - Treinamentos
+                          </option>
+                          <option value="74.2 - Serviços de Eventos">
+                            74.2 - Serviços de Eventos
+                          </option>
+                          <option value="74.3 - Serviços de Transporte">
+                            74.3 - Serviços de Transporte
+                          </option>
+                        </optgroup>
+
+                        <optgroup label="Despesas Operacionais">
+                          <option value="75 - Despesas Operacionais">
+                            75 - Despesas Operacionais
+                          </option>
+                          <option value="75.1 - Aluguel">75.1 - Aluguel</option>
+                          <option value="75.2 - Energia Elétrica">
+                            75.2 - Energia Elétrica
+                          </option>
+                          <option value="75.3 - Água e Esgoto">
+                            75.3 - Água e Esgoto
+                          </option>
+                        </optgroup>
+
+                        <optgroup label="Fornecimentos e Serviços Externos">
+                          <option value="76 - Fornecimentos e Serviços Externos">
+                            76 - Fornecimentos e Serviços Externos
+                          </option>
+                          <option value="76.1 - Trabalhos Especializados">
+                            76.1 - Trabalhos Especializados
+                          </option>
+                          <option value="76.2 - Honorários">
+                            76.2 - Honorários
+                          </option>
+                          <option value="76.3 - Comissões">
+                            76.3 - Comissões
+                          </option>
+                          <option value="76.4 - Rendas e Aluguéis">
+                            76.4 - Rendas e Aluguéis
+                          </option>
+                          <option value="76.5 - Comunicação">
+                            76.5 - Comunicação
+                          </option>
+                          <option value="76.6 - Seguros">76.6 - Seguros</option>
+                          <option value="76.7 - Royalties">
+                            76.7 - Royalties
+                          </option>
+                        </optgroup>
+
+                        <optgroup label="Impostos e IVA">
+                          <option value="77 - Impostos e IVA">
+                            77 - Impostos e IVA
+                          </option>
+                          <option value="77.1 - IVA Suportado">
+                            77.1 - IVA Suportado
+                          </option>
+                          <option value="77.2 - IVA Dedutível">
+                            77.2 - IVA Dedutível
+                          </option>
+                          <option value="77.3 - IVA Liquidado">
+                            77.3 - IVA Liquidado
+                          </option>
+                        </optgroup>
+
+                        <optgroup label="Gastos com o Pessoal">
+                          <option value="78 - Gastos com o Pessoal">
+                            78 - Gastos com o Pessoal
+                          </option>
+                          <option value="78.1 - Remunerações">
+                            78.1 - Remunerações
+                          </option>
+                          <option value="78.2 - Benefícios Pós-Emprego">
+                            78.2 - Benefícios Pós-Emprego
+                          </option>
+                          <option value="78.3 - Indemnizações">
+                            78.3 - Indemnizações
+                          </option>
+                        </optgroup>
+
+                        <optgroup label="Juros e Encargos Financeiros">
+                          <option value="79 - Juros e Encargos Financeiros">
+                            79 - Juros e Encargos Financeiros
+                          </option>
+                          <option value="79.1 - Juros Suportados">
+                            79.1 - Juros Suportados
+                          </option>
+                          <option value="79.2 - Diferenças de Câmbio">
+                            79.2 - Diferenças de Câmbio
+                          </option>
+                        </optgroup>
                     </select>
                   </div>
 
@@ -586,7 +723,12 @@ function Fatura() {
                   {/* Print button */}
                   <button
                     className="print-btn"
-                    onClick={() => window.print()}
+                    onClick={() => {
+                      const printWindow = window.open(fileUrl, '_blank');
+                      printWindow.onload = () => {
+                        printWindow.print();
+                      };
+                    }}
                     title="Imprimir documento"
                     aria-label="Imprimir documento"
                   >
@@ -1037,7 +1179,11 @@ function Fatura() {
                     <button
                       type="button"
                       className="btn-save"
-                      onClick={handleSubmit}
+                      onClick={async () => {
+                        handleSubmit(new Event('submit'));
+                        toggleDetailsPanel();
+                        faturaDeleted();
+                      }}
                       aria-label="Guardar alterações"
                     >
                       <FaSave />
@@ -1046,7 +1192,11 @@ function Fatura() {
                     <button
                       type="button"
                       className="btn-delete"
-                      onClick={() => deleteFatura(selectedFatura.id)}
+                      onClick={async () => {
+                        await deleteFatura(selectedFatura.id);
+                        toggleDetailsPanel();
+                        faturaDeleted();
+                      }}
                       aria-label="Eliminar fatura"
                     >
                       <FaTrashAlt />

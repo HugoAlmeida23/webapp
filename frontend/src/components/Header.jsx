@@ -24,7 +24,6 @@ function Header() {
   return (
     <div className={collapsed ? "collapsed" : ""}>
       <aside onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <button class="menu-btn fa fa-chevron-left"></button>
         <a href="/" class="logo-wrapper">
           <span class="fa-brands fa-uikit"></span>
           <span class="brand-name">Troftech</span>
@@ -33,24 +32,31 @@ function Header() {
         <ul class="menu-items">
           <li>
             <a href="./">
-              <span class="icon fa fa-house"></span>
-              <span class="item-name">Home</span>
+              <span class="icon fa fa-chart-line"></span>
+              <span class="item-name">Dashboard</span>
             </a>
-            <span class="tooltip">Home</span>
+            <span class="tooltip">Dashboard</span>
           </li>
           <li>
             <a href="./faturas">
-              <span class="icon fa fa-chart-line"></span>
+              <span class="icon fa fa-folder-open"></span>
               <span class="item-name">Gestor de Documentos</span>
             </a>
             <span class="tooltip">Gestor de Documentos</span>
           </li>
           <li>
             <a href="./inserirFatura">
-              <span class="icon fa fa-chart-simple"></span>
+              <span class="icon fa fa-file-circle-plus"></span>
               <span class="item-name">Inserir Documentos</span>
             </a>
             <span class="tooltip">Inserir Documentos</span>
+          </li>
+          <li>
+            <a href="./logout">
+              <span class="icon fa fa-right-from-bracket"></span>
+              <span class="item-name">Sair</span>
+            </a>
+            <span class="tooltip">Sair</span>
           </li>
         </ul>
       </aside>
