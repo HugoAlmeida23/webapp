@@ -1,0 +1,17 @@
+FROM python:3.10
+
+# Install system dependencies (including Tesseract and Poppler)
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    tesseract-ocr-por \
+    tesseract-ocr-eng \
+    poppler-utils
+
+WORKDIR /app
+COPY backend/requirements.txt .
+RUN pip install -r requirements.txt
+RUN pip install gunicorn opencv-python-headless
+
+COPY backend/ .
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

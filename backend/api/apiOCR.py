@@ -12,11 +12,16 @@ model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
 # Get base directory and set up paths
 base_dir = os.path.dirname(os.path.abspath(__file__))
-poppler_path = os.path.join(base_dir, "..", "poppler-24.08.0", "library", "bin")
-
+# For development
+if os.path.exists(os.path.join(base_dir, "..", "poppler-24.08.0", "library", "bin")):
+    poppler_path = os.path.join(base_dir, "..", "poppler-24.08.0", "library", "bin")
+else:
+    # For deployment - poppler is in system path
+    poppler_path = None
+    
 # Set Tesseract path if needed (comment out if Tesseract is in PATH)
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Linux/Mac
+# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Linux/Mac
 
 def perform_ocr(image_path, language='por+eng'):
     """Use Tesseract OCR to extract text from image"""
