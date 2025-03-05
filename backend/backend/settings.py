@@ -100,11 +100,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.getenv('HOST'),
+        'HOST': 'db.jfsbgwchfufoapdlmkiv.supabase.co',
         'PORT': '5432',
         'NAME': 'postgres',
-        'USER': os.getenv('USER'),
-        'PASSWORD': os.getenv('PASSWORD'),
+        'USER': 'postgres',
+        'PASSWORD': 'datapostgressql',
     }
 }
 
