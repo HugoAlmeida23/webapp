@@ -5,8 +5,9 @@
       "src": "package.json",
       "use": "@vercel/node",
       "config": {
-        "buildCommand": "chmod +x ./node_modules/.bin/vite && npm run build"
+        "buildCommand": "npm run build"
       }
+    }
   ],
   "rewrites": [
     {
