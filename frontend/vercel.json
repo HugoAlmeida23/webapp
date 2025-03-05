@@ -3,11 +3,10 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/static-build",
+      "use": "@vercel/node",
       "config": {
         "buildCommand": "chmod +x ./node_modules/.bin/vite && npm run build"
       }
-    }
   ],
   "rewrites": [
     {
