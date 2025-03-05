@@ -6,8 +6,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist",
-        "buildCommand": "FORCE_INSTALL=true rm -rf node_modules && npm install && npm run build",
-        "installCommand": "npm install"
+        "buildCommand": "npm uninstall axios && npm install axios@latest && npm run build"
       }
     }
   ],
