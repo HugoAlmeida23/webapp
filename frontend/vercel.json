@@ -1,9 +1,12 @@
 {
-    "rewrites": [
-      {
-        "source": "/:path*",
-        "destination": "/index.html"
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "buildCommand": "chmod +x ./node_modules/.bin/vite && npm run build"
       }
-    ]
-  }
-  
+    }
+  ]
+}
