@@ -12,5 +12,11 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/index.html" }
-  ]
+  ],
+  "github": {
+    "enabled": true,
+    "silent": true,
+    "autoJobCancelation": true
+  },
+  "bypassCache": true
 }
