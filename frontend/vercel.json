@@ -6,7 +6,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist",
-        "buildCommand": "npm ci && npx vite build"
+        "buildCommand": "rm -rf node_modules && npm install && npm run build"
       }
     }
   ],
