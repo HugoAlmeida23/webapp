@@ -6,17 +6,12 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist",
-        "buildCommand": "rm -rf node_modules && npm install && npm run build"
+        "buildCommand": "FORCE_INSTALL=true rm -rf node_modules && npm install && npm run build",
+        "installCommand": "npm install"
       }
     }
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/index.html" }
-  ],
-  "github": {
-    "enabled": true,
-    "silent": true,
-    "autoJobCancelation": true
-  },
-  "bypassCache": true
+  ]
 }
