@@ -9,4 +9,9 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+    environment:
+      - DATABASE_HOST=db.jfsbgwchfufoapdlmkiv.supabase.co  # Pointing to Supabase DB
+      - DATABASE_NAME=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=datapostgressql
     restart: always
