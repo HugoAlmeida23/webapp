@@ -13,3 +13,4 @@ google-generativeai
 supabase
 boto3
 opencv-python-headless
+pytesseract
