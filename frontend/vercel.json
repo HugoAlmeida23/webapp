@@ -8,5 +8,11 @@
         "buildCommand": "chmod +x ./node_modules/.bin/vite && npm run build"
       }
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
   ]
 }
