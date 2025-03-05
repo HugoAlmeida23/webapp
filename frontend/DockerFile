@@ -1,20 +1,18 @@
 # Use a more stable Node version
 FROM node:20-alpine as build
-
 WORKDIR /app
-
 # Copy package files first (for better caching)
 COPY frontend/package*.json ./
-
 # Install dependencies
 RUN npm install
-
 # Copy the rest of frontend
 COPY frontend/ .
 
+# Add this line here to increase memory limit
+ENV NODE_OPTIONS="--max-old-space-size=384"
+
 # Build the app
 RUN npm run build
-
 # Nginx stage
 FROM nginx:alpine
 # Vite outputs to 'dist' by default, not 'build'
