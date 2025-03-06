@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+import dj_database_url
 import os
 
 
@@ -98,14 +99,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'db.jfsbgwchfufoapdlmkiv.supabase.co',
-        'PORT': '5432',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'datapostgressql',
-    }
+    'default': dj_database_url.config(
+        default="postgresql://postgres:datapostgressql@db.jfsbgwchfufoapdlmkiv.supabase.co:5432/postgres",
+        conn_max_age=600,
+        ssl_require=True  # Ensure SSL is required
+    )
 }
 
 # Password validation
